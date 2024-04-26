@@ -11,7 +11,6 @@
 #include <vector>
 
 namespace gkit {
-
 struct UnweightedUndiGraph {
     std::string name;
     std::unordered_set<int> nodes;

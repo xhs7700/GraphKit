@@ -8,7 +8,7 @@ target("graphkit")
     set_kind("shared")
     add_includedirs("src/include")
     add_headerfiles("src/include/graphkit.h")
-    add_files("src/lib/*.cpp")
+    add_files("src/lib/**.cpp")
     add_packages("libarchive", "fmt", "indicators")
 
 target("test")
