@@ -1,5 +1,6 @@
 #include <cstddef>
 #include <filesystem>
+#include <functional>
 #include <istream>
 #include <map>
 #include <set>
@@ -63,13 +64,10 @@ struct WeightedUndiGraph {
     }
     WeightedUndiGraph(std::string name, std::istream& in);
     WeightedUndiGraph(std::string name, std::filesystem::path source);
+    WeightedUndiGraph(std::string name, std::istream& in, std::function<int()> generator);
+    WeightedUndiGraph(std::string name, std::filesystem::path source, std::function<int()> generator);
     void Init(std::istream& in);
-    template <typename Func>
-    WeightedUndiGraph(std::string name, std::istream& in, Func generator);
-    template <typename Func>
-    WeightedUndiGraph(std::string name, std::filesystem::path source, Func generator);
-    template <typename Func>
-    void Init(std::istream& in, Func generator);
+    void Init(std::istream& in, std::function<int()> generator);
     std::size_t nodeNum() { return nodes.size(); }
     std::size_t edgeNum() { return edges.size(); }
     void addNode(int u);
@@ -89,10 +87,10 @@ struct WeightedDiGraph {
     }
     WeightedDiGraph(std::string name, std::istream& in);
     WeightedDiGraph(std::string name, std::filesystem::path source);
-    template <typename Func>
-    WeightedDiGraph(std::string name, std::istream& in, Func generator);
-    template <typename Func>
-    WeightedDiGraph(std::string name, std::filesystem::path source, Func generator);
+    WeightedDiGraph(std::string name, std::istream& in, std::function<int()> generator);
+    WeightedDiGraph(std::string name, std::filesystem::path source, std::function<int()> generator);
+    void Init(std::istream& in);
+    void Init(std::istream& in, std::function<int()> generator);
     std::size_t nodeNum() { return adjs.size(); }
     std::size_t edgeNum() { return edges.size(); }
     void addNode(int u);
