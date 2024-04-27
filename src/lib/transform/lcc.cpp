@@ -70,20 +70,17 @@ UnweightedUndiGraph UnweightedUndiGraph::LCC()
         spinner2.tick();
     }
     spinner2.markAsCompleted();
-    uint64_t lccSize = 0;
-    for (const node_t u : nodes) {
-        if (!dsu.parent[u].isRoot)
-            continue;
-        lccSize = std::max(lccSize, dsu.parent[u].val);
-    }
-    fmt::println("lccSize = {}", lccSize);
-    // std::string newName = fmt::format("{}_LCC", name);
-    // std::unordered_set<node_t> newNodes;
-    // std::set<std::pair<node_t, node_t>> newEdges;
-    // auto inLCC = [&dsu](node_t u) { return dsu.parent[u].isRoot; };
-    // std::copy_if(nodes.cbegin(), nodes.cend(), std::inserter(newNodes, newNodes.end()), inLCC);
-    // std::copy_if(edges.cbegin(), edges.cend(), std::inserter(newEdges, newEdges.end()), [&inLCC](std::pair<node_t, node_t> e) { return inLCC(e.first) && inLCC(e.second); });
-    // return UnweightedUndiGraph(newName, newNodes, newEdges);
-    return UnweightedUndiGraph("", {}, {});
+    node_t rootLCC = std::max_element(dsu.parent.begin(), dsu.parent.end(), [](const std::pair<node_t, DSUEntry>& p1, const std::pair<node_t, DSUEntry>& p2) {
+        uint64_t p1Size = p1.second.isRoot ? p1.second.val : 0;
+        uint64_t p2Size = p2.second.isRoot ? p2.second.val : 0;
+        return p1Size < p2Size;
+    })->first;
+    std::string newName = fmt::format("{}_LCC", name);
+    std::unordered_set<node_t> newNodes;
+    std::set<std::pair<node_t, node_t>> newEdges;
+    auto inLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) == rootLCC; };
+    std::copy_if(nodes.cbegin(), nodes.cend(), std::inserter(newNodes, newNodes.end()), inLCC);
+    std::copy_if(edges.cbegin(), edges.cend(), std::inserter(newEdges, newEdges.end()), [&inLCC](std::pair<node_t, node_t> e) { return inLCC(e.first) && inLCC(e.second); });
+    return UnweightedUndiGraph(newName, newNodes, newEdges);
 }
 }
