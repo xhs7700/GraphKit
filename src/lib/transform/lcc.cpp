@@ -83,4 +83,36 @@ UnweightedUndiGraph UnweightedUndiGraph::LCC()
     std::copy_if(edges.cbegin(), edges.cend(), std::inserter(newEdges, newEdges.end()), [&inLCC](std::pair<node_t, node_t> e) { return inLCC(e.first) && inLCC(e.second); });
     return UnweightedUndiGraph(newName, newNodes, newEdges);
 }
+WeightedUndiGraph WeightedUndiGraph::LCC()
+{
+    DSU dsu;
+    TickSpinner spinner1("LCC: Adding elements to DSU...", nodes.size());
+    for (const node_t u : nodes) {
+        dsu.add(u);
+        spinner1.tick();
+    }
+    spinner1.markAsCompleted();
+    TickSpinner spinner2("LCC: Performing setUnion...", edges.size());
+    for (const std::pair<std::pair<node_t, node_t>, weight_t>& p : edges) {
+        const auto [u, v] = p.first;
+        dsu.setUnion(u, v);
+        spinner2.tick();
+    }
+    spinner2.markAsCompleted();
+    node_t rootLCC = std::max_element(dsu.parent.begin(), dsu.parent.end(), [](const std::pair<node_t, DSUEntry>& p1, const std::pair<node_t, DSUEntry>& p2) {
+        uint64_t p1Size = p1.second.isRoot ? p1.second.val : 0;
+        uint64_t p2Size = p2.second.isRoot ? p2.second.val : 0;
+        return p1Size < p2Size;
+    })->first;
+    std::string newName = fmt::format("{}_LCC", name);
+    std::unordered_set<node_t> newNodes;
+    std::map<std::pair<node_t, node_t>, weight_t> newEdges;
+    auto inLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) == rootLCC; };
+    std::copy_if(nodes.cbegin(), nodes.cend(), std::inserter(newNodes, newNodes.end()), inLCC);
+    std::copy_if(edges.cbegin(), edges.cend(), std::inserter(newEdges, newEdges.end()), [&inLCC](std::pair<std::pair<node_t, node_t>, weight_t> p) {
+        const auto [u, v] = p.first;
+        return inLCC(u) && inLCC(v);
+    });
+    return WeightedUndiGraph(newName, newNodes, newEdges);
+}
 }
