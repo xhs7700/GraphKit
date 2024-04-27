@@ -1,4 +1,3 @@
-#include <cstddef>
 #include <filesystem>
 #include <functional>
 #include <istream>
@@ -11,11 +10,13 @@
 #include <vector>
 
 namespace gkit {
+using node_t = std::uint64_t;
+using weight_t = std::int64_t;
 struct UnweightedUndiGraph {
     std::string name;
-    std::unordered_set<int> nodes;
-    std::set<std::pair<int, int>> edges;
-    UnweightedUndiGraph(std::string name, std::unordered_set<int> nodes, std::set<std::pair<int, int>> edges)
+    std::unordered_set<node_t> nodes;
+    std::set<std::pair<node_t, node_t>> edges;
+    UnweightedUndiGraph(std::string name, std::unordered_set<node_t> nodes, std::set<std::pair<node_t, node_t>> edges)
         : name(name)
         , nodes(nodes)
         , edges(edges)
@@ -24,18 +25,18 @@ struct UnweightedUndiGraph {
     UnweightedUndiGraph(std::string name, std::istream& in);
     UnweightedUndiGraph(std::string name, std::filesystem::path source);
     void Init(std::istream& in);
-    std::size_t nodeNum() { return nodes.size(); }
-    std::size_t edgeNum() { return edges.size(); }
-    void addNode(int u);
-    void addEdge(int u, int v);
+    node_t nodeNum() { return nodes.size(); }
+    node_t edgeNum() { return edges.size(); }
+    void addNode(node_t u);
+    void addEdge(node_t u, node_t v);
     UnweightedUndiGraph LCC();
 };
 
 struct UnweightedDiGraph {
     std::string name;
-    std::unordered_map<int, std::vector<int>> adjs;
-    std::set<std::pair<int, int>> edges;
-    UnweightedDiGraph(std::string name, std::unordered_map<int, std::vector<int>> adjs, std::set<std::pair<int, int>> edges)
+    std::unordered_map<node_t, std::vector<node_t>> adjs;
+    std::set<std::pair<node_t, node_t>> edges;
+    UnweightedDiGraph(std::string name, std::unordered_map<node_t, std::vector<node_t>> adjs, std::set<std::pair<node_t, node_t>> edges)
         : name(name)
         , adjs(adjs)
         , edges(edges)
@@ -44,18 +45,18 @@ struct UnweightedDiGraph {
     UnweightedDiGraph(std::string name, std::istream& in);
     UnweightedDiGraph(std::string name, std::filesystem::path source);
     void Init(std::istream& in);
-    std::size_t nodeNum() { return adjs.size(); }
-    std::size_t edgeNum() { return edges.size(); }
-    void addNode(int u);
-    void addEdge(int u, int v);
+    node_t nodeNum() { return adjs.size(); }
+    node_t edgeNum() { return edges.size(); }
+    void addNode(node_t u);
+    void addEdge(node_t u, node_t v);
     UnweightedDiGraph LSCC();
 };
 
 struct WeightedUndiGraph {
     std::string name;
-    std::unordered_set<int> nodes;
-    std::map<std::pair<int, int>, int> edges;
-    WeightedUndiGraph(std::string name, std::unordered_set<int> nodes, std::map<std::pair<int, int>, int> edges)
+    std::unordered_set<node_t> nodes;
+    std::map<std::pair<node_t, node_t>, weight_t> edges;
+    WeightedUndiGraph(std::string name, std::unordered_set<node_t> nodes, std::map<std::pair<node_t, node_t>, weight_t> edges)
         : name(name)
         , nodes(nodes)
         , edges(edges)
@@ -63,22 +64,22 @@ struct WeightedUndiGraph {
     }
     WeightedUndiGraph(std::string name, std::istream& in);
     WeightedUndiGraph(std::string name, std::filesystem::path source);
-    WeightedUndiGraph(std::string name, std::istream& in, std::function<int()> generator);
-    WeightedUndiGraph(std::string name, std::filesystem::path source, std::function<int()> generator);
+    WeightedUndiGraph(std::string name, std::istream& in, std::function<weight_t()> generator);
+    WeightedUndiGraph(std::string name, std::filesystem::path source, std::function<weight_t()> generator);
     void Init(std::istream& in);
-    void Init(std::istream& in, std::function<int()> generator);
-    std::size_t nodeNum() { return nodes.size(); }
-    std::size_t edgeNum() { return edges.size(); }
-    void addNode(int u);
-    void addEdge(int u, int v, int w);
+    void Init(std::istream& in, std::function<weight_t()> generator);
+    node_t nodeNum() { return nodes.size(); }
+    node_t edgeNum() { return edges.size(); }
+    void addNode(node_t u);
+    void addEdge(node_t u, node_t v, weight_t w);
     WeightedUndiGraph LCC();
 };
 
 struct WeightedDiGraph {
     std::string name;
-    std::unordered_map<int, std::vector<std::pair<int, int>>> adjs;
-    std::map<std::pair<int, int>, int> edges;
-    WeightedDiGraph(std::string name, std::unordered_map<int, std::vector<std::pair<int, int>>> adjs, std::map<std::pair<int, int>, int> edges)
+    std::unordered_map<node_t, std::vector<std::pair<node_t, weight_t>>> adjs;
+    std::map<std::pair<node_t, node_t>, weight_t> edges;
+    WeightedDiGraph(std::string name, std::unordered_map<node_t, std::vector<std::pair<node_t, weight_t>>> adjs, std::map<std::pair<node_t, node_t>, weight_t> edges)
         : name(name)
         , adjs(adjs)
         , edges(edges)
@@ -86,22 +87,22 @@ struct WeightedDiGraph {
     }
     WeightedDiGraph(std::string name, std::istream& in);
     WeightedDiGraph(std::string name, std::filesystem::path source);
-    WeightedDiGraph(std::string name, std::istream& in, std::function<int()> generator);
-    WeightedDiGraph(std::string name, std::filesystem::path source, std::function<int()> generator);
+    WeightedDiGraph(std::string name, std::istream& in, std::function<weight_t()> generator);
+    WeightedDiGraph(std::string name, std::filesystem::path source, std::function<weight_t()> generator);
     void Init(std::istream& in);
-    void Init(std::istream& in, std::function<int()> generator);
-    std::size_t nodeNum() { return adjs.size(); }
-    std::size_t edgeNum() { return edges.size(); }
-    void addNode(int u);
-    void addEdge(int u, int v, int w);
+    void Init(std::istream& in, std::function<weight_t()> generator);
+    node_t nodeNum() { return adjs.size(); }
+    node_t edgeNum() { return edges.size(); }
+    void addNode(node_t u);
+    void addEdge(node_t u, node_t v, weight_t w);
     WeightedDiGraph LSCC();
 };
 
 struct SimpleUndiGraph {
-    std::size_t n, m;
+    node_t n, m;
     std::string name;
-    std::vector<std::vector<int>> adjs;
-    SimpleUndiGraph(std::size_t n, std::size_t m, std::string name, std::vector<std::vector<int>> adjs)
+    std::vector<std::vector<node_t>> adjs;
+    SimpleUndiGraph(node_t n, node_t m, std::string name, std::vector<std::vector<node_t>> adjs)
         : n(n)
         , m(m)
         , name(name)
@@ -111,15 +112,15 @@ struct SimpleUndiGraph {
     SimpleUndiGraph(UnweightedUndiGraph g);
     SimpleUndiGraph(std::string name, std::istream& in);
     SimpleUndiGraph(std::string name, std::filesystem::path source);
-    std::size_t nodeNum() { return n; }
-    std::size_t edgeNum() { return m; }
+    node_t nodeNum() { return n; }
+    node_t edgeNum() { return m; }
 };
 
 struct SimpleDiGraph {
-    std::size_t n, m;
+    node_t n, m;
     std::string name;
-    std::vector<std::vector<int>> adjs;
-    SimpleDiGraph(std::size_t n, std::size_t m, std::string name, std::vector<std::vector<int>> adjs)
+    std::vector<std::vector<node_t>> adjs;
+    SimpleDiGraph(node_t n, node_t m, std::string name, std::vector<std::vector<node_t>> adjs)
         : n(n)
         , m(m)
         , name(name)
@@ -129,8 +130,8 @@ struct SimpleDiGraph {
     SimpleDiGraph(UnweightedDiGraph g);
     SimpleDiGraph(std::string name, std::istream& in);
     SimpleDiGraph(std::string name, std::filesystem::path source);
-    std::size_t nodeNum() { return n; }
-    std::size_t edgeNum() { return m; }
+    node_t nodeNum() { return n; }
+    node_t edgeNum() { return m; }
 };
 
 std::filesystem::path GetKonectPath(const std::string& internal_name);

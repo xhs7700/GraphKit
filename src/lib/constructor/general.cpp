@@ -17,22 +17,22 @@ std::streamsize GetStreamSize(std::istream& in)
     return file_size;
 }
 
-void UnweightedUndiGraph::addNode(int u) { nodes.insert(u); }
-void WeightedUndiGraph::addNode(int u) { nodes.insert(u); }
-void UnweightedDiGraph::addNode(int u)
+void UnweightedUndiGraph::addNode(node_t u) { nodes.insert(u); }
+void WeightedUndiGraph::addNode(node_t u) { nodes.insert(u); }
+void UnweightedDiGraph::addNode(node_t u)
 {
     if (adjs.contains(u))
         return;
     adjs[u] = {};
 }
-void WeightedDiGraph::addNode(int u)
+void WeightedDiGraph::addNode(node_t u)
 {
     if (adjs.contains(u))
         return;
     adjs[u] = {};
 }
 
-void UnweightedUndiGraph::addEdge(int u, int v)
+void UnweightedUndiGraph::addEdge(node_t u, node_t v)
 {
     if (u > v)
         std::swap(u, v);
@@ -41,7 +41,7 @@ void UnweightedUndiGraph::addEdge(int u, int v)
     nodes.insert(u), nodes.insert(v);
     edges.insert({ u, v });
 }
-void WeightedUndiGraph::addEdge(int u, int v, int w)
+void WeightedUndiGraph::addEdge(node_t u, node_t v, weight_t w)
 {
     if (u > v)
         std::swap(u, v);
@@ -50,7 +50,7 @@ void WeightedUndiGraph::addEdge(int u, int v, int w)
     nodes.insert(u), nodes.insert(v);
     edges[{ u, v }] = w;
 }
-void UnweightedDiGraph::addEdge(int u, int v)
+void UnweightedDiGraph::addEdge(node_t u, node_t v)
 {
     if (u == v || edges.contains({ u, v }))
         return;
@@ -58,7 +58,7 @@ void UnweightedDiGraph::addEdge(int u, int v)
     adjs[u].push_back(v);
     edges.insert({ u, v });
 }
-void WeightedDiGraph::addEdge(int u, int v, int w)
+void WeightedDiGraph::addEdge(node_t u, node_t v, weight_t w)
 {
     if (u == v || edges.contains({ u, v }))
         return;
@@ -72,126 +72,102 @@ void UnweightedUndiGraph::Init(std::istream& in)
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    indicators::ProgressSpinner spinner = PostfixSpinner(fmt::format("Reading UnweightedUndiGraph {}", name));
+    SetSpinner spinner(fmt::format("Reading UnweightedUndiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;
-        int u, v;
+        node_t u, v;
         std::istringstream iss(line);
         iss >> u >> v;
         addEdge(u, v);
-        int cur_progress = static_cast<double>(in.tellg()) / static_cast<double>(file_size) * 100;
-        if (cur_progress > prev_progress) {
-            spinner.set_progress(cur_progress);
-            prev_progress = cur_progress;
-        }
+        spinner.setProgress(in.tellg());
     }
-    spinner.mark_as_completed();
+    spinner.markAsCompleted();
 }
 void WeightedUndiGraph::Init(std::istream& in)
 {
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    indicators::ProgressSpinner spinner = PostfixSpinner(fmt::format("Reading WeightedUndiGraph {}", name));
+    SetSpinner spinner(fmt::format("Reading WeightedUndiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;
-        int u, v, w;
+        node_t u, v, w;
         std::istringstream iss(line);
         iss >> u >> v >> w;
         addEdge(u, v, w);
-        int cur_progress = static_cast<double>(in.tellg()) / static_cast<double>(file_size) * 100;
-        if (cur_progress > prev_progress) {
-            spinner.set_progress(cur_progress);
-            prev_progress = cur_progress;
-        }
+        spinner.setProgress(in.tellg());
     }
-    spinner.mark_as_completed();
+    spinner.markAsCompleted();
 }
-void WeightedUndiGraph::Init(std::istream& in, std::function<int()> generator)
+void WeightedUndiGraph::Init(std::istream& in, std::function<weight_t()> generator)
 {
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    indicators::ProgressSpinner spinner = PostfixSpinner(fmt::format("Reading WeightedUndiGraph {}", name));
+    SetSpinner spinner(fmt::format("Reading WeightedUndiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;
-        int u, v;
+        node_t u, v;
         std::istringstream iss(line);
         iss >> u >> v;
         addEdge(u, v, generator());
-        int cur_progress = static_cast<double>(in.tellg()) / static_cast<double>(file_size) * 100;
-        if (cur_progress > prev_progress) {
-            spinner.set_progress(cur_progress);
-            prev_progress = cur_progress;
-        }
+        spinner.setProgress(in.tellg());
     }
-    spinner.mark_as_completed();
+    spinner.markAsCompleted();
 }
 void UnweightedDiGraph::Init(std::istream& in)
 {
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    indicators::ProgressSpinner spinner = PostfixSpinner(fmt::format("Reading UnweightedDiGraph {}", name));
+    SetSpinner spinner(fmt::format("Reading UnweightedDiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;
-        int u, v;
+        node_t u, v;
         std::istringstream iss(line);
         iss >> u >> v;
         addEdge(u, v);
-        int cur_progress = static_cast<double>(in.tellg()) / static_cast<double>(file_size) * 100;
-        if (cur_progress > prev_progress) {
-            spinner.set_progress(cur_progress);
-            prev_progress = cur_progress;
-        }
+        spinner.setProgress(in.tellg());
     }
-    spinner.mark_as_completed();
+    spinner.markAsCompleted();
 }
 void WeightedDiGraph::Init(std::istream& in)
 {
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    indicators::ProgressSpinner spinner = PostfixSpinner(fmt::format("Reading WeightedDiGraph {}", name));
+    SetSpinner spinner(fmt::format("Reading WeightedDiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;
-        int u, v, w;
+        node_t u, v, w;
         std::istringstream iss(line);
         iss >> u >> v >> w;
         addEdge(u, v, w);
-        int cur_progress = static_cast<double>(in.tellg()) / static_cast<double>(file_size) * 100;
-        if (cur_progress > prev_progress) {
-            spinner.set_progress(cur_progress);
-            prev_progress = cur_progress;
-        }
+        spinner.setProgress(in.tellg());
     }
-    spinner.mark_as_completed();
+    spinner.markAsCompleted();
 }
-void WeightedDiGraph::Init(std::istream& in, std::function<int()> generator)
+void WeightedDiGraph::Init(std::istream& in, std::function<weight_t()> generator)
 {
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    indicators::ProgressSpinner spinner = PostfixSpinner(fmt::format("Reading WeightedDiGraph {}", name));
+    SetSpinner spinner(fmt::format("Reading WeightedDiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;
-        int u, v;
+        node_t u, v;
         std::istringstream iss(line);
         iss >> u >> v;
         addEdge(u, v, generator());
-        int cur_progress = static_cast<double>(in.tellg()) / static_cast<double>(file_size) * 100;
-        if (cur_progress > prev_progress) {
-            spinner.set_progress(cur_progress);
-            prev_progress = cur_progress;
-        }
+        spinner.setProgress(in.tellg());
     }
-    spinner.mark_as_completed();
+    spinner.markAsCompleted();
 }
 
 UnweightedUndiGraph::UnweightedUndiGraph(std::string name, std::istream& in)
@@ -204,7 +180,7 @@ WeightedUndiGraph::WeightedUndiGraph(std::string name, std::istream& in)
 {
     Init(in);
 }
-WeightedUndiGraph::WeightedUndiGraph(std::string name, std::istream& in, std::function<int()> generator)
+WeightedUndiGraph::WeightedUndiGraph(std::string name, std::istream& in, std::function<weight_t()> generator)
     : name(name)
 {
     Init(in, generator);
@@ -219,7 +195,7 @@ WeightedDiGraph::WeightedDiGraph(std::string name, std::istream& in)
 {
     Init(in);
 }
-WeightedDiGraph::WeightedDiGraph(std::string name, std::istream& in, std::function<int()> generator)
+WeightedDiGraph::WeightedDiGraph(std::string name, std::istream& in, std::function<weight_t()> generator)
     : name(name)
 {
     Init(in, generator);
@@ -237,7 +213,7 @@ WeightedUndiGraph::WeightedUndiGraph(std::string name, std::filesystem::path sou
     std::ifstream fin(source);
     Init(fin);
 }
-WeightedUndiGraph::WeightedUndiGraph(std::string name, std::filesystem::path source, std::function<int()> generator)
+WeightedUndiGraph::WeightedUndiGraph(std::string name, std::filesystem::path source, std::function<weight_t()> generator)
     : name(name)
 {
     std::ifstream fin(source);
@@ -255,7 +231,7 @@ WeightedDiGraph::WeightedDiGraph(std::string name, std::filesystem::path source)
     std::ifstream fin(source);
     Init(fin);
 }
-WeightedDiGraph::WeightedDiGraph(std::string name, std::filesystem::path source, std::function<int()> generator)
+WeightedDiGraph::WeightedDiGraph(std::string name, std::filesystem::path source, std::function<weight_t()> generator)
     : name(name)
 {
     std::ifstream fin(source);
