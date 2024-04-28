@@ -8,7 +8,8 @@
 #include <unordered_map>
 #include <utility>
 
-using std::uint64_t, gkit::node_t;
+using gkit::node_t, gkit::weight_t;
+using std::uint64_t;
 
 struct DSUEntry {
     bool isRoot;
@@ -17,6 +18,38 @@ struct DSUEntry {
 
 struct DSU {
     std::unordered_map<node_t, DSUEntry> parent;
+    DSU() = default;
+    DSU(gkit::UnweightedUndiGraph& g)
+    {
+        TickSpinner spinner1("LCC: Adding elements to DSU...", g.nodes.size());
+        for (const node_t u : g.nodes) {
+            add(u);
+            spinner1.tick();
+        }
+        spinner1.markAsCompleted();
+        TickSpinner spinner2("LCC: Performing setUnion...", g.edges.size());
+        for (const auto [u, v] : g.edges) {
+            setUnion(u, v);
+            spinner2.tick();
+        }
+        spinner2.markAsCompleted();
+    }
+    DSU(gkit::WeightedUndiGraph& g)
+    {
+        TickSpinner spinner1("LCC: Adding elements to DSU...", g.nodes.size());
+        for (const node_t u : g.nodes) {
+            add(u);
+            spinner1.tick();
+        }
+        spinner1.markAsCompleted();
+        TickSpinner spinner2("LCC: Performing setUnion...", g.edges.size());
+        for (const std::pair<std::pair<node_t, node_t>, weight_t>& p : g.edges) {
+            const auto [u, v] = p.first;
+            setUnion(u, v);
+            spinner2.tick();
+        }
+        spinner2.markAsCompleted();
+    }
     void add(node_t u) { parent.insert({ u, { true, 1ull } }); }
     node_t find(node_t u)
     {
@@ -52,29 +85,21 @@ struct DSU {
         }
         return true;
     }
+    node_t maxKey()
+    {
+        return std::max_element(parent.begin(), parent.end(), [](const std::pair<node_t, DSUEntry>& p1, const std::pair<node_t, DSUEntry>& p2) {
+            uint64_t p1Size = p1.second.isRoot ? p1.second.val : 0;
+            uint64_t p2Size = p2.second.isRoot ? p2.second.val : 0;
+            return p1Size < p2Size;
+        })->first;
+    }
 };
 
 namespace gkit {
 UnweightedUndiGraph UnweightedUndiGraph::LCC()
 {
-    DSU dsu;
-    TickSpinner spinner1("LCC: Adding elements to DSU...", nodes.size());
-    for (const node_t u : nodes) {
-        dsu.add(u);
-        spinner1.tick();
-    }
-    spinner1.markAsCompleted();
-    TickSpinner spinner2("LCC: Performing setUnion...", edges.size());
-    for (const auto [u, v] : edges) {
-        dsu.setUnion(u, v);
-        spinner2.tick();
-    }
-    spinner2.markAsCompleted();
-    node_t rootLCC = std::max_element(dsu.parent.begin(), dsu.parent.end(), [](const std::pair<node_t, DSUEntry>& p1, const std::pair<node_t, DSUEntry>& p2) {
-        uint64_t p1Size = p1.second.isRoot ? p1.second.val : 0;
-        uint64_t p2Size = p2.second.isRoot ? p2.second.val : 0;
-        return p1Size < p2Size;
-    })->first;
+    DSU dsu(*this);
+    node_t rootLCC = dsu.maxKey();
     std::string newName = fmt::format("{}_LCC", name);
     std::unordered_set<node_t> newNodes;
     std::set<std::pair<node_t, node_t>> newEdges;
@@ -85,25 +110,8 @@ UnweightedUndiGraph UnweightedUndiGraph::LCC()
 }
 WeightedUndiGraph WeightedUndiGraph::LCC()
 {
-    DSU dsu;
-    TickSpinner spinner1("LCC: Adding elements to DSU...", nodes.size());
-    for (const node_t u : nodes) {
-        dsu.add(u);
-        spinner1.tick();
-    }
-    spinner1.markAsCompleted();
-    TickSpinner spinner2("LCC: Performing setUnion...", edges.size());
-    for (const std::pair<std::pair<node_t, node_t>, weight_t>& p : edges) {
-        const auto [u, v] = p.first;
-        dsu.setUnion(u, v);
-        spinner2.tick();
-    }
-    spinner2.markAsCompleted();
-    node_t rootLCC = std::max_element(dsu.parent.begin(), dsu.parent.end(), [](const std::pair<node_t, DSUEntry>& p1, const std::pair<node_t, DSUEntry>& p2) {
-        uint64_t p1Size = p1.second.isRoot ? p1.second.val : 0;
-        uint64_t p2Size = p2.second.isRoot ? p2.second.val : 0;
-        return p1Size < p2Size;
-    })->first;
+    DSU dsu(*this);
+    node_t rootLCC = dsu.maxKey();
     std::string newName = fmt::format("{}_LCC", name);
     std::unordered_set<node_t> newNodes;
     std::map<std::pair<node_t, node_t>, weight_t> newEdges;
