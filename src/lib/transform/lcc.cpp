@@ -7,6 +7,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 using gkit::node_t, gkit::weight_t;
 using std::uint64_t;
@@ -106,7 +107,7 @@ UnweightedUndiGraph UnweightedUndiGraph::LCC()
     auto inLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) == rootLCC; };
     std::copy_if(nodes.cbegin(), nodes.cend(), std::inserter(newNodes, newNodes.end()), inLCC);
     std::copy_if(edges.cbegin(), edges.cend(), std::inserter(newEdges, newEdges.end()), [&inLCC](std::pair<node_t, node_t> e) { return inLCC(e.first) && inLCC(e.second); });
-    return UnweightedUndiGraph(newName, newNodes, newEdges);
+    return UnweightedUndiGraph(std::move(newName), std::move(newNodes), std::move(newEdges));
 }
 WeightedUndiGraph WeightedUndiGraph::LCC()
 {
@@ -121,6 +122,69 @@ WeightedUndiGraph WeightedUndiGraph::LCC()
         const auto [u, v] = p.first;
         return inLCC(u) && inLCC(v);
     });
-    return WeightedUndiGraph(newName, newNodes, newEdges);
+    return WeightedUndiGraph(std::move(newName), std::move(newNodes), std::move(newEdges));
+}
+
+SimpleUndiGraph::SimpleUndiGraph(UnweightedUndiGraph&& g)
+    : name(std::move(g.name))
+{
+    name.append("_LCC");
+    DSU dsu(g);
+    node_t rootLCC = dsu.maxKey();
+    auto outOfLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) != rootLCC; };
+    std::erase_if(g.nodes, outOfLCC);
+    std::erase_if(g.edges, [&outOfLCC](std::pair<node_t, node_t> e) { return outOfLCC(e.first) || outOfLCC(e.second); });
+    n = g.nodes.size();
+    m = g.edges.size();
+    std::unordered_map<node_t, node_t> o2n;
+    std::vector<node_t> degs(n + 1, 0);
+    bool renumber = *std::max_element(g.nodes.begin(), g.nodes.end()) != n;
+    TickSpinner spinner1("SimpleUndiGraph: Computing degrees...", m);
+    if (renumber) {
+        for (const auto [u, v] : g.edges) {
+            o2n.try_emplace(u, o2n.size() + 1);
+            o2n.try_emplace(v, o2n.size() + 1);
+            node_t newU = o2n[u], newV = o2n[v];
+            degs[newU]++, degs[newV]++;
+            spinner1.tick();
+        }
+    } else {
+        for (const auto [u, v] : g.edges) {
+            degs[u]++, degs[v]++;
+            spinner1.tick();
+        }
+    }
+    spinner1.markAsCompleted();
+    adjs.assign(n + 1, {});
+    for (int u = 1; u <= n; u++)
+        adjs[u].reserve(degs[u]);
+    TickSpinner spinner2("SimpleUndiGraph: Computing adjacency list...", m);
+    if (renumber) {
+        for (const auto [u, v] : g.edges) {
+            node_t newU = o2n[u], newV = o2n[v];
+            adjs[newU].push_back(newV), adjs[newV].push_back(newU);
+            spinner2.tick();
+        }
+    } else {
+        for (const auto [u, v] : g.edges) {
+            adjs[u].push_back(v), adjs[v].push_back(u);
+            spinner2.tick();
+        }
+    }
+    spinner2.markAsCompleted();
+    for (int u = 1; u <= n; u++)
+        std::sort(adjs[u].begin(), adjs[u].end());
+    std::unordered_set<node_t> nodes;
+    std::set<std::pair<node_t, node_t>> edges;
+    nodes.swap(g.nodes);
+    edges.swap(g.edges);
+}
+SimpleUndiGraph::SimpleUndiGraph(std::string&& name, std::istream& in)
+    : SimpleUndiGraph(UnweightedUndiGraph(std::move(name), in))
+{
+}
+SimpleUndiGraph::SimpleUndiGraph(std::string&& name, std::filesystem::path& source)
+    : SimpleUndiGraph(UnweightedUndiGraph(std::move(name), source))
+{
 }
 }
