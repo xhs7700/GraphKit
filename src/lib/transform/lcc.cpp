@@ -2,7 +2,6 @@
 #include "utils.h"
 #include <algorithm>
 #include <cstdint>
-#include <fmt/core.h>
 #include <iterator>
 #include <tuple>
 #include <unordered_map>
@@ -101,7 +100,8 @@ UnweightedUndiGraph UnweightedUndiGraph::LCC()
 {
     DSU dsu(*this);
     node_t rootLCC = dsu.maxKey();
-    std::string newName = fmt::format("{}_LCC", name);
+    std::string newName(name);
+    newName.append("_LCC");
     std::unordered_set<node_t> newNodes;
     std::set<std::pair<node_t, node_t>> newEdges;
     auto inLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) == rootLCC; };
@@ -113,7 +113,8 @@ WeightedUndiGraph WeightedUndiGraph::LCC()
 {
     DSU dsu(*this);
     node_t rootLCC = dsu.maxKey();
-    std::string newName = fmt::format("{}_LCC", name);
+    std::string newName(name);
+    newName.append("_LCC");
     std::unordered_set<node_t> newNodes;
     std::map<std::pair<node_t, node_t>, weight_t> newEdges;
     auto inLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) == rootLCC; };

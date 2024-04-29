@@ -64,10 +64,10 @@ struct WeightedUndiGraph {
     }
     WeightedUndiGraph(std::string&& name, std::istream& in);
     WeightedUndiGraph(std::string&& name, std::filesystem::path& source);
-    WeightedUndiGraph(std::string&& name, std::istream& in, std::function<weight_t()>& generator);
-    WeightedUndiGraph(std::string&& name, std::filesystem::path& source, std::function<weight_t()>& generator);
+    WeightedUndiGraph(std::string&& name, std::istream& in, std::function<weight_t()>&& generator);
+    WeightedUndiGraph(std::string&& name, std::filesystem::path& source, std::function<weight_t()>&& generator);
     void Init(std::istream& in);
-    void Init(std::istream& in, std::function<weight_t()>& generator);
+    void Init(std::istream& in, std::function<weight_t()>&& generator);
     node_t nodeNum() { return nodes.size(); }
     node_t edgeNum() { return edges.size(); }
     void addNode(node_t u);
@@ -87,10 +87,10 @@ struct WeightedDiGraph {
     }
     WeightedDiGraph(std::string&& name, std::istream& in);
     WeightedDiGraph(std::string&& name, std::filesystem::path& source);
-    WeightedDiGraph(std::string&& name, std::istream& in, std::function<weight_t()>& generator);
-    WeightedDiGraph(std::string&& name, std::filesystem::path& source, std::function<weight_t()>& generator);
+    WeightedDiGraph(std::string&& name, std::istream& in, std::function<weight_t()>&& generator);
+    WeightedDiGraph(std::string&& name, std::filesystem::path& source, std::function<weight_t()>&& generator);
     void Init(std::istream& in);
-    void Init(std::istream& in, std::function<weight_t()>& generator);
+    void Init(std::istream& in, std::function<weight_t()>&& generator);
     node_t nodeNum() { return adjs.size(); }
     node_t edgeNum() { return edges.size(); }
     void addNode(node_t u);
