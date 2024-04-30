@@ -87,7 +87,7 @@ struct DSU {
     }
     node_t maxKey()
     {
-        return std::max_element(parent.begin(), parent.end(), [](const std::pair<node_t, DSUEntry>& p1, const std::pair<node_t, DSUEntry>& p2) {
+        return std::ranges::max_element(parent, [](const std::pair<node_t, DSUEntry>& p1, const std::pair<node_t, DSUEntry>& p2) {
             uint64_t p1Size = p1.second.isRoot ? p1.second.val : 0;
             uint64_t p2Size = p2.second.isRoot ? p2.second.val : 0;
             return p1Size < p2Size;
@@ -105,8 +105,8 @@ UnweightedUndiGraph UnweightedUndiGraph::LCC()
     std::unordered_set<node_t> newNodes;
     std::set<std::pair<node_t, node_t>> newEdges;
     auto inLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) == rootLCC; };
-    std::copy_if(nodes.cbegin(), nodes.cend(), std::inserter(newNodes, newNodes.end()), inLCC);
-    std::copy_if(edges.cbegin(), edges.cend(), std::inserter(newEdges, newEdges.end()), [&inLCC](std::pair<node_t, node_t> e) { return inLCC(e.first) && inLCC(e.second); });
+    std::ranges::copy_if(nodes, std::inserter(newNodes, newNodes.end()), inLCC);
+    std::ranges::copy_if(edges, std::inserter(newEdges, newEdges.end()), [&inLCC](std::pair<node_t, node_t> e) { return inLCC(e.first) && inLCC(e.second); });
     return UnweightedUndiGraph(std::move(newName), std::move(newNodes), std::move(newEdges));
 }
 WeightedUndiGraph WeightedUndiGraph::LCC()
@@ -118,8 +118,8 @@ WeightedUndiGraph WeightedUndiGraph::LCC()
     std::unordered_set<node_t> newNodes;
     std::map<std::pair<node_t, node_t>, weight_t> newEdges;
     auto inLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) == rootLCC; };
-    std::copy_if(nodes.cbegin(), nodes.cend(), std::inserter(newNodes, newNodes.end()), inLCC);
-    std::copy_if(edges.cbegin(), edges.cend(), std::inserter(newEdges, newEdges.end()), [&inLCC](std::pair<std::pair<node_t, node_t>, weight_t> p) {
+    std::ranges::copy_if(nodes, std::inserter(newNodes, newNodes.end()), inLCC);
+    std::ranges::copy_if(edges, std::inserter(newEdges, newEdges.end()), [&inLCC](std::pair<std::pair<node_t, node_t>, weight_t> p) {
         const auto [u, v] = p.first;
         return inLCC(u) && inLCC(v);
     });
@@ -129,52 +129,67 @@ WeightedUndiGraph WeightedUndiGraph::LCC()
 SimpleUndiGraph::SimpleUndiGraph(UnweightedUndiGraph&& g)
     : name(std::move(g.name))
 {
-    name.append("_LCC");
     DSU dsu(g);
     node_t rootLCC = dsu.maxKey();
     auto outOfLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) != rootLCC; };
     std::erase_if(g.nodes, outOfLCC);
     std::erase_if(g.edges, [&outOfLCC](std::pair<node_t, node_t> e) { return outOfLCC(e.first) || outOfLCC(e.second); });
-    n = g.nodes.size();
-    m = g.edges.size();
+    n = g.nodeNum();
+    m = g.edgeNum();
     std::unordered_map<node_t, node_t> o2n;
     std::vector<node_t> degs(n + 1, 0);
-    bool renumber = *std::max_element(g.nodes.begin(), g.nodes.end()) != n;
+    bool renumber = *std::ranges::max_element(g.nodes) != n;
+#ifdef SPINNER
     TickSpinner spinner1("SimpleUndiGraph: Computing degrees...", m);
+#endif
     if (renumber) {
-        for (const auto [u, v] : g.edges) {
-            o2n.try_emplace(u, o2n.size() + 1);
-            o2n.try_emplace(v, o2n.size() + 1);
+        for (const node_t& u : g.nodes)
+            o2n[u] = o2n.size() + 1;
+        for (const auto& [u, v] : g.edges) {
             node_t newU = o2n[u], newV = o2n[v];
             degs[newU]++, degs[newV]++;
+#ifdef SPINNER
             spinner1.tick();
+#endif
         }
     } else {
-        for (const auto [u, v] : g.edges) {
+        for (const auto& [u, v] : g.edges) {
             degs[u]++, degs[v]++;
+#ifdef SPINNER
             spinner1.tick();
+#endif
         }
     }
+#ifdef SPINNER
     spinner1.markAsCompleted();
+#endif
     adjs.assign(n + 1, {});
     for (int u = 1; u <= n; u++)
         adjs[u].reserve(degs[u]);
+#ifdef SPINNER
     TickSpinner spinner2("SimpleUndiGraph: Computing adjacency list...", m);
+#endif
     if (renumber) {
         for (const auto [u, v] : g.edges) {
             node_t newU = o2n[u], newV = o2n[v];
             adjs[newU].push_back(newV), adjs[newV].push_back(newU);
+#ifdef SPINNER
             spinner2.tick();
+#endif
         }
     } else {
         for (const auto [u, v] : g.edges) {
             adjs[u].push_back(v), adjs[v].push_back(u);
+#ifdef SPINNER
             spinner2.tick();
+#endif
         }
     }
+#ifdef SPINNER
     spinner2.markAsCompleted();
+#endif
     for (int u = 1; u <= n; u++)
-        std::sort(adjs[u].begin(), adjs[u].end());
+        std::ranges::sort(adjs[u]);
     std::unordered_set<node_t> nodes;
     std::set<std::pair<node_t, node_t>> edges;
     nodes.swap(g.nodes);

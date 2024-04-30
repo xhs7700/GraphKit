@@ -93,7 +93,7 @@ struct TarjanImpl {
         }
         spinner.markAsCompleted();
     }
-    node_t maxKey() { return std::distance(sccSizes.begin(), std::max_element(sccSizes.begin(), sccSizes.end())); }
+    node_t maxKey() { return std::distance(sccSizes.begin(), std::ranges::max_element(sccSizes)); }
 };
 
 namespace gkit {
@@ -106,16 +106,22 @@ UnweightedDiGraph UnweightedDiGraph::LSCC()
     std::unordered_map<node_t, std::vector<node_t>> newAdjs;
     std::set<std::pair<node_t, node_t>> newEdges;
     auto inLSCC = [&tarjanImpl, &rootLSCC](node_t u) { return tarjanImpl.sccID[u] == rootLSCC; };
+#ifdef SPINNER
     TickSpinner spinner("LSCC: Constructing ans graph...", nodeNum());
+#endif
     for (const auto& [u, adj] : adjs) {
+#ifdef SPINNER
         spinner.tick();
+#endif
         if (!inLSCC(u))
             continue;
         newAdjs[u] = {};
-        std::copy_if(adj.cbegin(), adj.cend(), std::back_inserter(newAdjs[u]), inLSCC);
+        std::ranges::copy_if(adj, std::back_inserter(newAdjs[u]), inLSCC);
     }
+#ifdef SPINNER
     spinner.markAsCompleted();
-    std::copy_if(edges.cbegin(), edges.cend(), std::inserter(newEdges, newEdges.end()), [&inLSCC](std::pair<node_t, node_t> e) { return inLSCC(e.first) && inLSCC(e.second); });
+#endif
+    std::ranges::copy_if(edges, std::inserter(newEdges, newEdges.end()), [&inLSCC](std::pair<node_t, node_t> e) { return inLSCC(e.first) && inLSCC(e.second); });
     return UnweightedDiGraph(std::move(newName), std::move(newAdjs), std::move(newEdges));
 }
 WeightedDiGraph WeightedDiGraph::LSCC()
@@ -127,19 +133,92 @@ WeightedDiGraph WeightedDiGraph::LSCC()
     std::unordered_map<node_t, std::vector<std::pair<node_t, weight_t>>> newAdjs;
     std::map<std::pair<node_t, node_t>, weight_t> newEdges;
     auto inLSCC = [&tarjanImpl, &rootLSCC](node_t u) { return tarjanImpl.sccID[u] == rootLSCC; };
+#ifdef SPINNER
     TickSpinner spinner("LSCC: Constructing ans graph...", nodeNum());
+#endif
     for (const auto& [u, adj] : adjs) {
+#ifdef SPINNER
         spinner.tick();
+#endif
         if (!inLSCC(u))
             continue;
         newAdjs[u] = {};
-        std::copy_if(adj.cbegin(), adj.cend(), std::back_inserter(newAdjs[u]), [&inLSCC](std::pair<node_t, weight_t> e) { return inLSCC(e.first); });
+        std::ranges::copy_if(adj, std::back_inserter(newAdjs[u]), [&inLSCC](std::pair<node_t, weight_t> e) { return inLSCC(e.first); });
     }
+#ifdef SPINNER
     spinner.markAsCompleted();
-    std::copy_if(edges.cbegin(), edges.cend(), std::inserter(newEdges, newEdges.end()), [&inLSCC](std::pair<std::pair<node_t, node_t>, weight_t> p) {
+#endif
+    std::ranges::copy_if(edges, std::inserter(newEdges, newEdges.end()), [&inLSCC](std::pair<std::pair<node_t, node_t>, weight_t> p) {
         const auto [u, v] = p.first;
         return inLSCC(u) && inLSCC(v);
     });
     return WeightedDiGraph(std::move(newName), std::move(newAdjs), std::move(newEdges));
+}
+
+SimpleDiGraph::SimpleDiGraph(UnweightedDiGraph&& g)
+    : name(std::move(g.name))
+{
+    TarjanImpl tarjanImpl(g);
+    node_t rootLSCC = tarjanImpl.maxKey();
+    auto outOfLSCC = [&tarjanImpl, &rootLSCC](node_t u) { return tarjanImpl.sccID[u] != rootLSCC; };
+    std::erase_if(g.adjs, [&outOfLSCC](std::pair<node_t, std::vector<node_t>> p) { return outOfLSCC(p.first); });
+    n = g.nodeNum();
+    m = 0ull;
+    node_t max_node = 0ull;
+#ifdef SPINNER
+    TickSpinner spinner1("SimpleDiGraph: Removing nodes out of LSCC...", n);
+#endif
+    for (auto& [u, adj] : g.adjs) {
+        max_node = std::max(max_node, u);
+        std::erase_if(adj, outOfLSCC);
+        m += adj.size();
+#ifdef SPINNER
+        spinner1.tick();
+#endif
+    }
+#ifdef SPINNER
+    spinner1.markAsCompleted();
+#endif
+    std::unordered_map<node_t, node_t> o2n;
+    adjs.assign(n + 1, {});
+    bool renumber = max_node != n;
+#ifdef SPINNER
+    TickSpinner spinner2("SimpleDiGraph: Computing adjacency list...", n);
+#endif
+    if (renumber) {
+        for (const auto& [u, _] : g.adjs)
+            o2n[u] = o2n.size() + 1;
+        for (auto& [u, adj] : g.adjs) {
+            node_t newU = o2n[u];
+            std::ranges::transform(adj, adj.begin(), [&o2n](node_t u) { return o2n[u]; });
+            std::ranges::sort(adj);
+            adjs[newU].swap(adj);
+#ifdef SPINNER
+            spinner2.tick();
+#endif
+        }
+    } else {
+        for (auto& [u, adj] : g.adjs) {
+            adjs[u].swap(adj);
+#ifdef SPINNER
+            spinner2.tick();
+#endif
+        }
+    }
+#ifdef SPINNER
+    spinner2.markAsCompleted();
+#endif
+    std::unordered_map<node_t, std::vector<node_t>> nullAdjs;
+    std::set<std::pair<node_t, node_t>> edges;
+    nullAdjs.swap(g.adjs);
+    edges.swap(g.edges);
+}
+SimpleDiGraph::SimpleDiGraph(std::string&& name, std::istream& in)
+    : SimpleDiGraph(UnweightedDiGraph(std::move(name), in))
+{
+}
+SimpleDiGraph::SimpleDiGraph(std::string&& name, std::filesystem::path& source)
+    : SimpleDiGraph(UnweightedDiGraph(std::move(name), source))
+{
 }
 }

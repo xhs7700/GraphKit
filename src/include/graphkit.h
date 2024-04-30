@@ -2,6 +2,7 @@
 #include <functional>
 #include <istream>
 #include <map>
+#include <ostream>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -25,8 +26,8 @@ struct UnweightedUndiGraph {
     UnweightedUndiGraph(std::string&& name, std::istream& in);
     UnweightedUndiGraph(std::string&& name, std::filesystem::path& source);
     void Init(std::istream& in);
-    node_t nodeNum() { return nodes.size(); }
-    node_t edgeNum() { return edges.size(); }
+    node_t nodeNum() const { return nodes.size(); }
+    node_t edgeNum() const { return edges.size(); }
     void addNode(node_t u);
     void addEdge(node_t u, node_t v);
     UnweightedUndiGraph LCC();
@@ -45,8 +46,8 @@ struct UnweightedDiGraph {
     UnweightedDiGraph(std::string&& name, std::istream& in);
     UnweightedDiGraph(std::string&& name, std::filesystem::path& source);
     void Init(std::istream& in);
-    node_t nodeNum() { return adjs.size(); }
-    node_t edgeNum() { return edges.size(); }
+    node_t nodeNum() const { return adjs.size(); }
+    node_t edgeNum() const { return edges.size(); }
     void addNode(node_t u);
     void addEdge(node_t u, node_t v);
     UnweightedDiGraph LSCC();
@@ -68,8 +69,8 @@ struct WeightedUndiGraph {
     WeightedUndiGraph(std::string&& name, std::filesystem::path& source, std::function<weight_t()>&& generator);
     void Init(std::istream& in);
     void Init(std::istream& in, std::function<weight_t()>&& generator);
-    node_t nodeNum() { return nodes.size(); }
-    node_t edgeNum() { return edges.size(); }
+    node_t nodeNum() const { return nodes.size(); }
+    node_t edgeNum() const { return edges.size(); }
     void addNode(node_t u);
     void addEdge(node_t u, node_t v, weight_t w);
     WeightedUndiGraph LCC();
@@ -91,8 +92,8 @@ struct WeightedDiGraph {
     WeightedDiGraph(std::string&& name, std::filesystem::path& source, std::function<weight_t()>&& generator);
     void Init(std::istream& in);
     void Init(std::istream& in, std::function<weight_t()>&& generator);
-    node_t nodeNum() { return adjs.size(); }
-    node_t edgeNum() { return edges.size(); }
+    node_t nodeNum() const { return adjs.size(); }
+    node_t edgeNum() const { return edges.size(); }
     void addNode(node_t u);
     void addEdge(node_t u, node_t v, weight_t w);
     WeightedDiGraph LSCC();
@@ -112,8 +113,8 @@ struct SimpleUndiGraph {
     SimpleUndiGraph(UnweightedUndiGraph&& g);
     SimpleUndiGraph(std::string&& name, std::istream& in);
     SimpleUndiGraph(std::string&& name, std::filesystem::path& source);
-    node_t nodeNum() { return n; }
-    node_t edgeNum() { return m; }
+    node_t nodeNum() const { return n; }
+    node_t edgeNum() const { return m; }
 };
 
 struct SimpleDiGraph {
@@ -127,12 +128,18 @@ struct SimpleDiGraph {
         , adjs(adjs)
     {
     }
-    SimpleDiGraph(UnweightedDiGraph g);
+    SimpleDiGraph(UnweightedDiGraph&& g);
     SimpleDiGraph(std::string&& name, std::istream& in);
     SimpleDiGraph(std::string&& name, std::filesystem::path& source);
-    node_t nodeNum() { return n; }
-    node_t edgeNum() { return m; }
+    node_t nodeNum() const { return n; }
+    node_t edgeNum() const { return m; }
 };
+std::ostream& operator<<(std::ostream& os, const UnweightedUndiGraph& g);
+std::ostream& operator<<(std::ostream& os, const WeightedUndiGraph& g);
+std::ostream& operator<<(std::ostream& os, const SimpleUndiGraph& g);
+std::ostream& operator<<(std::ostream& os, const UnweightedDiGraph& g);
+std::ostream& operator<<(std::ostream& os, const WeightedDiGraph& g);
+std::ostream& operator<<(std::ostream& os, const SimpleDiGraph& g);
 
 std::filesystem::path GetKonectPath(const std::string& internal_name);
 UnweightedUndiGraph LoadUnweightedUndiKonect(std::string& internal_name, std::string&& name);

@@ -9,11 +9,12 @@ int main(int argc, char** argv)
 {
     auto cur_path = std::filesystem::current_path();
     fmt::println("current path is {}.", cur_path.string());
-    std::filesystem::path in_path("/home/xhs-wsl/workspace/Git/GraphKit/tmp/out.soc-pokec-relationships");
+    std::filesystem::path in_path("/home/xhs-wsl/workspace/Git/GraphKit/tmp/out.p2p-Gnutella30");
+    std::filesystem::path out_path("/home/xhs-wsl/workspace/Git/GraphKit/tmp/gnutella30.txt");
     std::ifstream fin(in_path);
-    gkit::WeightedDiGraph g("pokec", in_path, []() { return 1; });
+    std::ofstream fout(out_path);
+    gkit::SimpleDiGraph g("gnutella30", in_path);
     fmt::println("The size of g is ({}, {})", g.nodeNum(), g.edgeNum());
-    gkit::WeightedDiGraph gLSCC = g.LSCC();
-    fmt::println("The size of gLSCC is ({}, {})", gLSCC.nodeNum(), gLSCC.edgeNum());
+    fout << g;
     return 0;
 }
