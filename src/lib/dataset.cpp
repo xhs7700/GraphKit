@@ -35,7 +35,6 @@ void ExtractFile(const fs::path& path, std::function<int(archive*)> formatFunc)
     archive* a = archive_read_new();
     archive_read_support_filter_all(a);
     formatFunc(a);
-    fmt::println("bzPath = {}", path.c_str());
     if (archive_read_open_filename(a, path.c_str(), 10240) != ARCHIVE_OK) {
         std::string errStr = fmt::format("Failed to open archive: {}\n", archive_error_string(a));
         std::cerr << errStr;
