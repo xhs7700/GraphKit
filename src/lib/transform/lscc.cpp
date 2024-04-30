@@ -217,7 +217,7 @@ SimpleDiGraph::SimpleDiGraph(std::string&& name, std::istream& in)
     : SimpleDiGraph(UnweightedDiGraph(std::move(name), in))
 {
 }
-SimpleDiGraph::SimpleDiGraph(std::string&& name, std::filesystem::path& source)
+SimpleDiGraph::SimpleDiGraph(std::string&& name, const std::filesystem::path& source)
     : SimpleDiGraph(UnweightedDiGraph(std::move(name), source))
 {
 }

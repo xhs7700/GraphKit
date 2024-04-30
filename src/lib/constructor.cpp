@@ -201,37 +201,37 @@ WeightedDiGraph::WeightedDiGraph(std::string&& name, std::istream& in, std::func
     Init(in, std::move(generator));
 }
 
-UnweightedUndiGraph::UnweightedUndiGraph(std::string&& name, std::filesystem::path& source)
+UnweightedUndiGraph::UnweightedUndiGraph(std::string&& name, const std::filesystem::path& source)
     : name(name)
 {
     std::ifstream fin(source);
     Init(fin);
 }
-WeightedUndiGraph::WeightedUndiGraph(std::string&& name, std::filesystem::path& source)
+WeightedUndiGraph::WeightedUndiGraph(std::string&& name, const std::filesystem::path& source)
     : name(name)
 {
     std::ifstream fin(source);
     Init(fin);
 }
-WeightedUndiGraph::WeightedUndiGraph(std::string&& name, std::filesystem::path& source, std::function<weight_t()>&& generator)
+WeightedUndiGraph::WeightedUndiGraph(std::string&& name, const std::filesystem::path& source, std::function<weight_t()>&& generator)
     : name(name)
 {
     std::ifstream fin(source);
     Init(fin, std::move(generator));
 }
-UnweightedDiGraph::UnweightedDiGraph(std::string&& name, std::filesystem::path& source)
+UnweightedDiGraph::UnweightedDiGraph(std::string&& name, const std::filesystem::path& source)
     : name(name)
 {
     std::ifstream fin(source);
     Init(fin);
 }
-WeightedDiGraph::WeightedDiGraph(std::string&& name, std::filesystem::path& source)
+WeightedDiGraph::WeightedDiGraph(std::string&& name, const std::filesystem::path& source)
     : name(name)
 {
     std::ifstream fin(source);
     Init(fin);
 }
-WeightedDiGraph::WeightedDiGraph(std::string&& name, std::filesystem::path& source, std::function<weight_t()>&& generator)
+WeightedDiGraph::WeightedDiGraph(std::string&& name, const std::filesystem::path& source, std::function<weight_t()>&& generator)
     : name(name)
 {
     std::ifstream fin(source);

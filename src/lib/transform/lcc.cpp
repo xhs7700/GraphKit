@@ -199,7 +199,7 @@ SimpleUndiGraph::SimpleUndiGraph(std::string&& name, std::istream& in)
     : SimpleUndiGraph(UnweightedUndiGraph(std::move(name), in))
 {
 }
-SimpleUndiGraph::SimpleUndiGraph(std::string&& name, std::filesystem::path& source)
+SimpleUndiGraph::SimpleUndiGraph(std::string&& name, const std::filesystem::path& source)
     : SimpleUndiGraph(UnweightedUndiGraph(std::move(name), source))
 {
 }

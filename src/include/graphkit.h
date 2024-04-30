@@ -24,7 +24,7 @@ struct UnweightedUndiGraph {
     {
     }
     UnweightedUndiGraph(std::string&& name, std::istream& in);
-    UnweightedUndiGraph(std::string&& name, std::filesystem::path& source);
+    UnweightedUndiGraph(std::string&& name, const std::filesystem::path& source);
     void Init(std::istream& in);
     node_t nodeNum() const { return nodes.size(); }
     node_t edgeNum() const { return edges.size(); }
@@ -44,7 +44,7 @@ struct UnweightedDiGraph {
     {
     }
     UnweightedDiGraph(std::string&& name, std::istream& in);
-    UnweightedDiGraph(std::string&& name, std::filesystem::path& source);
+    UnweightedDiGraph(std::string&& name, const std::filesystem::path& source);
     void Init(std::istream& in);
     node_t nodeNum() const { return adjs.size(); }
     node_t edgeNum() const { return edges.size(); }
@@ -64,9 +64,9 @@ struct WeightedUndiGraph {
     {
     }
     WeightedUndiGraph(std::string&& name, std::istream& in);
-    WeightedUndiGraph(std::string&& name, std::filesystem::path& source);
+    WeightedUndiGraph(std::string&& name, const std::filesystem::path& source);
     WeightedUndiGraph(std::string&& name, std::istream& in, std::function<weight_t()>&& generator);
-    WeightedUndiGraph(std::string&& name, std::filesystem::path& source, std::function<weight_t()>&& generator);
+    WeightedUndiGraph(std::string&& name, const std::filesystem::path& source, std::function<weight_t()>&& generator);
     void Init(std::istream& in);
     void Init(std::istream& in, std::function<weight_t()>&& generator);
     node_t nodeNum() const { return nodes.size(); }
@@ -87,9 +87,9 @@ struct WeightedDiGraph {
     {
     }
     WeightedDiGraph(std::string&& name, std::istream& in);
-    WeightedDiGraph(std::string&& name, std::filesystem::path& source);
+    WeightedDiGraph(std::string&& name, const std::filesystem::path& source);
     WeightedDiGraph(std::string&& name, std::istream& in, std::function<weight_t()>&& generator);
-    WeightedDiGraph(std::string&& name, std::filesystem::path& source, std::function<weight_t()>&& generator);
+    WeightedDiGraph(std::string&& name, const std::filesystem::path& source, std::function<weight_t()>&& generator);
     void Init(std::istream& in);
     void Init(std::istream& in, std::function<weight_t()>&& generator);
     node_t nodeNum() const { return adjs.size(); }
@@ -112,7 +112,7 @@ struct SimpleUndiGraph {
     }
     SimpleUndiGraph(UnweightedUndiGraph&& g);
     SimpleUndiGraph(std::string&& name, std::istream& in);
-    SimpleUndiGraph(std::string&& name, std::filesystem::path& source);
+    SimpleUndiGraph(std::string&& name, const std::filesystem::path& source);
     node_t nodeNum() const { return n; }
     node_t edgeNum() const { return m; }
 };
@@ -130,7 +130,7 @@ struct SimpleDiGraph {
     }
     SimpleDiGraph(UnweightedDiGraph&& g);
     SimpleDiGraph(std::string&& name, std::istream& in);
-    SimpleDiGraph(std::string&& name, std::filesystem::path& source);
+    SimpleDiGraph(std::string&& name, const std::filesystem::path& source);
     node_t nodeNum() const { return n; }
     node_t edgeNum() const { return m; }
 };
@@ -141,34 +141,30 @@ std::ostream& operator<<(std::ostream& os, const UnweightedDiGraph& g);
 std::ostream& operator<<(std::ostream& os, const WeightedDiGraph& g);
 std::ostream& operator<<(std::ostream& os, const SimpleDiGraph& g);
 
-std::filesystem::path GetKonectPath(const std::string& internal_name);
-UnweightedUndiGraph LoadUnweightedUndiKonect(std::string& internal_name, std::string&& name);
-UnweightedUndiGraph LoadUnweightedUndiKonect(std::string& internal_name);
+std::filesystem::path GetKonectPath(const std::string& internalName);
+std::filesystem::path GetSnapPath(const std::string& url);
+
+UnweightedUndiGraph LoadUnweightedUndiKonect(std::string& internalName, std::string&& name);
+UnweightedUndiGraph LoadUnweightedUndiKonect(std::string& internalName);
 UnweightedUndiGraph LoadUnweightedUndiSnap(std::string& url, std::string&& name);
-UnweightedUndiGraph LoadUnweightedUndiSnap(std::string& url);
 
-WeightedUndiGraph LoadWeightedUndiKonect(std::string& internal_name, std::string&& name);
-WeightedUndiGraph LoadWeightedUndiKonect(std::string& internal_name);
+WeightedUndiGraph LoadWeightedUndiKonect(std::string& internalName, std::string&& name);
+WeightedUndiGraph LoadWeightedUndiKonect(std::string& internalName);
 WeightedUndiGraph LoadWeightedUndiSnap(std::string& url, std::string&& name);
-WeightedUndiGraph LoadWeightedUndiSnap(std::string& url);
 
-SimpleUndiGraph LoadSimpleUndiKonect(std::string& internal_name, std::string&& name);
-SimpleUndiGraph LoadSimpleUndiKonect(std::string& internal_name);
+SimpleUndiGraph LoadSimpleUndiKonect(std::string& internalName, std::string&& name);
+SimpleUndiGraph LoadSimpleUndiKonect(std::string& internalName);
 SimpleUndiGraph LoadSimpleUndiSnap(std::string& url, std::string&& name);
-SimpleUndiGraph LoadSimpleUndiSnap(std::string& url);
 
-UnweightedDiGraph LoadUnweightedDiKonect(std::string& internal_name, std::string&& name);
-UnweightedDiGraph LoadUnweightedDiKonect(std::string& internal_name);
+UnweightedDiGraph LoadUnweightedDiKonect(std::string& internalName, std::string&& name);
+UnweightedDiGraph LoadUnweightedDiKonect(std::string& internalName);
 UnweightedDiGraph LoadUnweightedDiSnap(std::string& url, std::string&& name);
-UnweightedDiGraph LoadUnweightedDiSnap(std::string& url);
 
-WeightedDiGraph LoadWeightedDiKonect(std::string& internal_name, std::string&& name);
-WeightedDiGraph LoadWeightedDiKonect(std::string& internal_name);
+WeightedDiGraph LoadWeightedDiKonect(std::string& internalName, std::string&& name);
+WeightedDiGraph LoadWeightedDiKonect(std::string& internalName);
 WeightedDiGraph LoadWeightedDiSnap(std::string& url, std::string&& name);
-WeightedDiGraph LoadWeightedDiSnap(std::string& url);
 
-SimpleDiGraph LoadSimpleDiKonect(std::string& internal_name, std::string&& name);
-SimpleDiGraph LoadSimpleDiKonect(std::string& internal_name);
+SimpleDiGraph LoadSimpleDiKonect(std::string& internalName, std::string&& name);
+SimpleDiGraph LoadSimpleDiKonect(std::string& internalName);
 SimpleDiGraph LoadSimpleDiSnap(std::string& url, std::string&& name);
-SimpleDiGraph LoadSimpleDiSnap(std::string& url);
 }

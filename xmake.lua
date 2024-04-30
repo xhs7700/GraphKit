@@ -15,7 +15,7 @@ target("graphkit")
     add_includedirs("src/include")
     add_headerfiles("src/include/graphkit.h")
     add_files("src/lib/**.cpp")
-    add_packages("libarchive", "fmt", "indicators")
+    add_packages("libarchive", "fmt", "indicators", "cpr")
 
 target("test")
     set_kind("binary")
