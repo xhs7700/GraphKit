@@ -137,14 +137,14 @@ SimpleUndiGraph::SimpleUndiGraph(UnweightedUndiGraph&& g)
     n = g.nodeNum();
     m = g.edgeNum();
     std::unordered_map<node_t, node_t> o2n;
-    std::vector<node_t> degs(n + 1, 0);
-    bool renumber = *std::ranges::max_element(g.nodes) != n;
+    std::vector<node_t> degs(n, 0);
+    bool renumber = *std::ranges::max_element(g.nodes) != n - 1;
 #ifdef SPINNER
     TickSpinner spinner1("SimpleUndiGraph: Computing degrees...", m);
 #endif
     if (renumber) {
         for (const node_t& u : g.nodes)
-            o2n[u] = o2n.size() + 1;
+            o2n[u] = o2n.size();
         for (const auto& [u, v] : g.edges) {
             node_t newU = o2n[u], newV = o2n[v];
             degs[newU]++, degs[newV]++;
@@ -163,8 +163,8 @@ SimpleUndiGraph::SimpleUndiGraph(UnweightedUndiGraph&& g)
 #ifdef SPINNER
     spinner1.markAsCompleted();
 #endif
-    adjs.assign(n + 1, {});
-    for (int u = 1; u <= n; u++)
+    adjs.assign(n, {});
+    for (node_t u = 0; u < n; u++)
         adjs[u].reserve(degs[u]);
 #ifdef SPINNER
     TickSpinner spinner2("SimpleUndiGraph: Computing adjacency list...", m);
@@ -188,7 +188,7 @@ SimpleUndiGraph::SimpleUndiGraph(UnweightedUndiGraph&& g)
 #ifdef SPINNER
     spinner2.markAsCompleted();
 #endif
-    for (int u = 1; u <= n; u++)
+    for (node_t u = 0; u < n; u++)
         std::ranges::sort(adjs[u]);
     std::unordered_set<node_t> nodes;
     std::set<std::pair<node_t, node_t>> edges;

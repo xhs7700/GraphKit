@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& os, const SimpleUndiGraph& g)
     std::string desc = fmt::format("# SimpleUndiGraph: {}\n# Nodes: {} Edges: {}\n", g.name, g.n, g.m);
     os << desc;
     TickSpinner spinner(fmt::format("Writing SimpleUndiGraph {}...", g.name), g.m);
-    for (node_t u = 1; u <= g.n; u++) {
+    for (node_t u = 0; u < g.n; u++) {
         const std::vector<node_t>& adj = g.adjs[u];
         auto it = std::ranges::upper_bound(adj, u);
         std::for_each(it, adj.cend(), [&](const node_t& v) {
@@ -86,7 +86,7 @@ std::ostream& operator<<(std::ostream& os, const SimpleDiGraph& g)
     std::string desc = fmt::format("# SimpleDiGraph: {}\n# Nodes: {} Edges: {}\n", g.name, g.nodeNum(), g.edgeNum());
     os << desc;
     TickSpinner spinner(fmt::format("Writing SimpleDiGraph {}...", g.name), g.edgeNum());
-    for (node_t u = 1; u <= g.n; u++) {
+    for (node_t u = 0; u < g.n; u++) {
         for (const node_t& v : g.adjs[u]) {
             std::string line = fmt::format("{}\t{}\n", u, v);
             os << line;

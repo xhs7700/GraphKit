@@ -180,14 +180,14 @@ SimpleDiGraph::SimpleDiGraph(UnweightedDiGraph&& g)
     spinner1.markAsCompleted();
 #endif
     std::unordered_map<node_t, node_t> o2n;
-    adjs.assign(n + 1, {});
-    bool renumber = max_node != n;
+    adjs.assign(n, {});
+    bool renumber = max_node != n - 1;
 #ifdef SPINNER
     TickSpinner spinner2("SimpleDiGraph: Computing adjacency list...", n);
 #endif
     if (renumber) {
         for (const auto& [u, _] : g.adjs)
-            o2n[u] = o2n.size() + 1;
+            o2n[u] = o2n.size();
         for (auto& [u, adj] : g.adjs) {
             node_t newU = o2n[u];
             std::ranges::transform(adj, adj.begin(), [&o2n](node_t u) { return o2n[u]; });
