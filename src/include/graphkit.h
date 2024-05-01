@@ -167,4 +167,12 @@ WeightedDiGraph LoadWeightedDiSnap(std::string& url, std::string&& name);
 SimpleDiGraph LoadSimpleDiKonect(std::string& internalName, std::string&& name);
 SimpleDiGraph LoadSimpleDiKonect(std::string& internalName);
 SimpleDiGraph LoadSimpleDiSnap(std::string& url, std::string&& name);
+
+SimpleUndiGraph LoadPseudoExt(std::uint64_t m, std::uint64_t g);
+SimpleUndiGraph LoadPseudo(std::uint64_t g);
+SimpleUndiGraph LoadCorona(std::uint64_t q, std::uint64_t g);
+SimpleUndiGraph LoadKoch(std::uint64_t g);
+SimpleUndiGraph LoadCayleyTree(std::uint64_t b, std::uint64_t g);
+SimpleUndiGraph Load3CayleyTree(std::uint64_t g);
+SimpleUndiGraph LoadApollo(std::uint64_t g);
 }

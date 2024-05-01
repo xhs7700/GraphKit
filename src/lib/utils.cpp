@@ -42,9 +42,9 @@ TickSpinner::TickSpinner(std::string postfixText, std::uint64_t maxProgress)
           indicators::option::ForegroundColor { indicators::Color::green })
 {
 }
-void TickSpinner::tick()
+void TickSpinner::tick(std::uint64_t tickNum)
 {
-    curProgress++;
+    curProgress += tickNum;
     std::uint64_t newPercent = static_cast<double>(curProgress) / static_cast<double>(maxProgress) * 100;
     if (newPercent > curPercent) {
         curPercent = newPercent;

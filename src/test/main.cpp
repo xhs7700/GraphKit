@@ -34,6 +34,14 @@ void SnapTest()
     fout << g;
 }
 
+void SyntheticTest()
+{
+    auto g = gkit::LoadApollo(14);
+    fmt::println("size of g is ({}, {}).", g.nodeNum(), g.edgeNum());
+    std::ofstream fout(std::filesystem::path(PROJECT_DIR) / "tmp" / fmt::format("{}.txt", g.name));
+    fout << g;
+}
+
 int main(int argc, char** argv)
 {
     return 0;

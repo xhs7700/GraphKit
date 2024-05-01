@@ -19,6 +19,6 @@ struct TickSpinner {
     std::uint64_t curPercent;
     std::string postfixText;
     TickSpinner(std::string postfixText, std::uint64_t maxProgress);
-    void tick();
+    void tick(std::uint64_t tickNum = 1);
     void markAsCompleted() { spinner.mark_as_completed(); }
 };
