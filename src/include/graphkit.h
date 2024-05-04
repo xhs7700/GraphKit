@@ -1,3 +1,5 @@
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
 #include <filesystem>
 #include <functional>
 #include <istream>
@@ -115,6 +117,9 @@ struct SimpleUndiGraph {
     SimpleUndiGraph(std::string&& name, const std::filesystem::path& source);
     node_t nodeNum() const { return n; }
     node_t edgeNum() const { return m; }
+    Eigen::VectorXd degrVec();
+    Eigen::SparseMatrix<double> degrMat();
+    Eigen::SparseMatrix<double> adjMat();
 };
 
 struct SimpleDiGraph {
@@ -133,6 +138,9 @@ struct SimpleDiGraph {
     SimpleDiGraph(std::string&& name, const std::filesystem::path& source);
     node_t nodeNum() const { return n; }
     node_t edgeNum() const { return m; }
+    Eigen::VectorXd degrVec();
+    Eigen::SparseMatrix<double> degrMat();
+    Eigen::SparseMatrix<double> adjMat();
 };
 std::ostream& operator<<(std::ostream& os, const UnweightedUndiGraph& g);
 std::ostream& operator<<(std::ostream& os, const WeightedUndiGraph& g);

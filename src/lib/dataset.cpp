@@ -62,12 +62,27 @@ void ExtractFile(const fs::path& path, std::function<int(archive*)> formatFunc)
     }
 }
 
+fs::path SearchKonectPath(const fs::path& dirPath)
+{
+    if (!fs::exists(dirPath))
+        return {};
+    for (const auto& entry : fs::directory_iterator(dirPath)) {
+        const fs::path entryPath = entry.path();
+        if (fs::is_regular_file(entryPath) && entryPath.filename().string().starts_with("out."))
+            return entryPath;
+    }
+    return {};
+}
+
 fs::path GetKonectPath(const std::string& internalName)
 {
     const fs::path tmpDir = std::filesystem::temp_directory_path();
-    const fs::path filePath = tmpDir / internalName / fmt::format("out.{}", internalName);
+    const fs::path dirPath = tmpDir / internalName;
+    const fs::path filePath = SearchKonectPath(dirPath);
     if (fs::exists(filePath))
         return filePath;
+    else if (fs::exists(dirPath))
+        fs::remove_all(dirPath);
     const fs::path bzPath = tmpDir / fmt::format("{}.tar.bz2", internalName);
     if (!fs::exists(bzPath)) {
         std::string url = fmt::format("http://konect.cc/files/download.tsv.{}.tar.bz2", internalName);
@@ -75,7 +90,7 @@ fs::path GetKonectPath(const std::string& internalName)
         DownloadFile(url, fout);
     }
     ExtractFile(bzPath, archive_read_support_format_all);
-    return filePath;
+    return SearchKonectPath(dirPath);
 }
 
 fs::path GetSnapPath(const std::string& url)
