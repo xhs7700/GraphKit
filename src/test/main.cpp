@@ -4,9 +4,7 @@
 #include <fmt/format.h>
 #include <fmt/ranges.h>
 #include <fstream>
-#include <ostream>
 #include <string>
-#include <vector>
 
 void GraphConstructTest()
 {
@@ -43,26 +41,6 @@ void SyntheticTest()
     fmt::println("size of g is ({}, {}).", g.nodeNum(), g.edgeNum());
     std::ofstream fout(std::filesystem::path(PROJECT_DIR) / "tmp" / fmt::format("{}.txt", g.name));
     fout << g;
-}
-
-void SignedKonectTest(const std::string& internalName, std::ofstream& fout, int lineNum)
-{
-    auto path = gkit::GetKonectPath(internalName);
-    std::ifstream fin(path);
-    std::string desc = fmt::format("{} lines of {}:\n", lineNum, internalName);
-    std::string line;
-    fout << desc;
-    for (int _ = 0; _ < lineNum; _++) {
-        std::getline(fin, line);
-        fout << line << std::endl;
-    }
-}
-
-void SignedKonectTest(std::vector<std::string> internalNames, int lineNum)
-{
-    std::ofstream fout(std::filesystem::path(PROJECT_DIR) / "tmp" / "SignedTest.txt");
-    for (const auto& internalName : internalNames)
-        SignedKonectTest(internalName, fout, lineNum);
 }
 
 int main(int argc, char** argv)
