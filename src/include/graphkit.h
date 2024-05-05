@@ -253,37 +253,24 @@ std::ostream& operator<<(std::ostream& os, const SignedDiGraph& g);
 std::filesystem::path GetKonectPath(const std::string& internalName);
 std::filesystem::path GetSnapPath(const std::string& url);
 
-UnweightedUndiGraph LoadUnweightedUndiKonect(std::string& internalName, std::string&& name);
-UnweightedUndiGraph LoadUnweightedUndiKonect(std::string& internalName);
-UnweightedUndiGraph LoadUnweightedUndiSnap(std::string& url, std::string&& name);
-
-WeightedUndiGraph LoadWeightedUndiKonect(std::string& internalName, std::string&& name);
-WeightedUndiGraph LoadWeightedUndiKonect(std::string& internalName);
-WeightedUndiGraph LoadWeightedUndiSnap(std::string& url, std::string&& name);
-
-SimpleUndiGraph LoadSimpleUndiKonect(std::string& internalName, std::string&& name);
-SimpleUndiGraph LoadSimpleUndiKonect(std::string& internalName);
-SimpleUndiGraph LoadSimpleUndiSnap(std::string& url, std::string&& name);
-
-SignedUndiGraph LoadSignedUndiKonect(std::string& internalName, std::string&& name);
-SignedUndiGraph LoadSignedUndiKonect(std::string& internalName);
-SignedUndiGraph LoadSignedUndiSnap(std::string& url, std::string&& name);
-
-UnweightedDiGraph LoadUnweightedDiKonect(std::string& internalName, std::string&& name);
-UnweightedDiGraph LoadUnweightedDiKonect(std::string& internalName);
-UnweightedDiGraph LoadUnweightedDiSnap(std::string& url, std::string&& name);
-
-WeightedDiGraph LoadWeightedDiKonect(std::string& internalName, std::string&& name);
-WeightedDiGraph LoadWeightedDiKonect(std::string& internalName);
-WeightedDiGraph LoadWeightedDiSnap(std::string& url, std::string&& name);
-
-SimpleDiGraph LoadSimpleDiKonect(std::string& internalName, std::string&& name);
-SimpleDiGraph LoadSimpleDiKonect(std::string& internalName);
-SimpleDiGraph LoadSimpleDiSnap(std::string& url, std::string&& name);
-
-SignedDiGraph LoadSignedDiKonect(std::string& internalName, std::string&& name);
-SignedDiGraph LoadSignedDiKonect(std::string& internalName);
-SignedDiGraph LoadSignedDiSnap(std::string& url, std::string&& name);
+template <typename T>
+T LoadKonect(std::string& internalName, std::string&& name)
+{
+    const std::filesystem::path source = GetKonectPath(internalName);
+    return T(std::move(name), source);
+}
+template <typename T>
+T LoadKonect(std::string& internalName)
+{
+    std::string name(internalName);
+    return LoadKonect<T>(internalName, std::move(name));
+}
+template <typename T>
+T LoadSnap(std::string& url, std::string&& name)
+{
+    const std::filesystem::path source = GetSnapPath(url);
+    return T(std::move(name), source);
+}
 
 SimpleUndiGraph LoadPseudoExt(std::uint64_t m, std::uint64_t g);
 SimpleUndiGraph LoadPseudo(std::uint64_t g);
