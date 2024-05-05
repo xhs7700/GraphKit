@@ -25,6 +25,12 @@ struct UnweightedUndiGraph {
         , edges(edges)
     {
     }
+    UnweightedUndiGraph(const UnweightedUndiGraph& g)
+        : name(g.name)
+        , nodes(g.nodes)
+        , edges(g.edges)
+    {
+    }
     UnweightedUndiGraph(std::string&& name, std::istream& in);
     UnweightedUndiGraph(std::string&& name, const std::filesystem::path& source);
     void Init(std::istream& in);
@@ -45,6 +51,12 @@ struct UnweightedDiGraph {
         , edges(edges)
     {
     }
+    UnweightedDiGraph(const UnweightedDiGraph& g)
+        : name(g.name)
+        , adjs(g.adjs)
+        , edges(g.edges)
+    {
+    }
     UnweightedDiGraph(std::string&& name, std::istream& in);
     UnweightedDiGraph(std::string&& name, const std::filesystem::path& source);
     void Init(std::istream& in);
@@ -63,6 +75,12 @@ struct WeightedUndiGraph {
         : name(name)
         , nodes(nodes)
         , edges(edges)
+    {
+    }
+    WeightedUndiGraph(const WeightedUndiGraph& g)
+        : name(g.name)
+        , nodes(g.nodes)
+        , edges(g.edges)
     {
     }
     WeightedUndiGraph(std::string&& name, std::istream& in);
@@ -86,6 +104,12 @@ struct WeightedDiGraph {
         : name(name)
         , adjs(adjs)
         , edges(edges)
+    {
+    }
+    WeightedDiGraph(const WeightedDiGraph& g)
+        : name(g.name)
+        , adjs(g.adjs)
+        , edges(g.edges)
     {
     }
     WeightedDiGraph(std::string&& name, std::istream& in);
@@ -112,6 +136,13 @@ struct SimpleUndiGraph {
         , adjs(adjs)
     {
     }
+    SimpleUndiGraph(const SimpleUndiGraph& g)
+        : n(g.n)
+        , m(g.m)
+        , name(g.name)
+        , adjs(g.adjs)
+    {
+    }
     SimpleUndiGraph(UnweightedUndiGraph&& g);
     SimpleUndiGraph(std::string&& name, std::istream& in);
     SimpleUndiGraph(std::string&& name, const std::filesystem::path& source);
@@ -131,6 +162,13 @@ struct SimpleDiGraph {
         , m(m)
         , name(name)
         , adjs(adjs)
+    {
+    }
+    SimpleDiGraph(const SimpleDiGraph& g)
+        : n(g.n)
+        , m(g.m)
+        , name(g.name)
+        , adjs(g.adjs)
     {
     }
     SimpleDiGraph(UnweightedDiGraph&& g);
