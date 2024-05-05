@@ -137,41 +137,22 @@ SimpleUndiGraph::SimpleUndiGraph(UnweightedUndiGraph&& g)
     n = g.nodeNum();
     m = g.edgeNum();
     std::unordered_map<node_t, node_t> o2n;
-    std::vector<node_t> degs(n, 0);
     bool renumber = *std::ranges::max_element(g.nodes) != n - 1;
-    TickSpinner spinner1("SimpleUndiGraph: Computing degrees...", m);
-    if (renumber) {
-        for (const node_t& u : g.nodes)
-            o2n[u] = o2n.size();
-        for (const auto& [u, v] : g.edges) {
-            node_t newU = o2n[u], newV = o2n[v];
-            degs[newU]++, degs[newV]++;
-            spinner1.tick();
-        }
-    } else {
-        for (const auto& [u, v] : g.edges) {
-            degs[u]++, degs[v]++;
-            spinner1.tick();
-        }
-    }
-    spinner1.markAsCompleted();
     adjs.assign(n, {});
-    for (node_t u = 0; u < n; u++)
-        adjs[u].reserve(degs[u]);
-    TickSpinner spinner2("SimpleUndiGraph: Computing adjacency list...", m);
+    TickSpinner spinner("SimpleUndiGraph: Computing adjacency list...", m);
     if (renumber) {
         for (const auto [u, v] : g.edges) {
             node_t newU = o2n[u], newV = o2n[v];
             adjs[newU].push_back(newV), adjs[newV].push_back(newU);
-            spinner2.tick();
+            spinner.tick();
         }
     } else {
         for (const auto [u, v] : g.edges) {
             adjs[u].push_back(v), adjs[v].push_back(u);
-            spinner2.tick();
+            spinner.tick();
         }
     }
-    spinner2.markAsCompleted();
+    spinner.markAsCompleted();
     for (node_t u = 0; u < n; u++)
         std::ranges::sort(adjs[u]);
     std::unordered_set<node_t> nodes;
@@ -185,6 +166,64 @@ SimpleUndiGraph::SimpleUndiGraph(std::string&& name, std::istream& in)
 }
 SimpleUndiGraph::SimpleUndiGraph(std::string&& name, const std::filesystem::path& source)
     : SimpleUndiGraph(UnweightedUndiGraph(std::move(name), source))
+{
+}
+
+SignedUndiGraph::SignedUndiGraph(WeightedUndiGraph&& g)
+    : name(std::move(g.name))
+{
+    DSU dsu(g);
+    node_t rootLCC = dsu.maxKey();
+    auto outOfLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) != rootLCC; };
+    std::erase_if(g.nodes, outOfLCC);
+    std::erase_if(g.edges, [&outOfLCC](std::pair<std::pair<node_t, node_t>, weight_t> e) {
+        const auto& [u, v] = e.first;
+        return outOfLCC(u) || outOfLCC(v);
+    });
+    n = g.nodeNum();
+    m = g.edgeNum();
+    posAdjs.assign(n, {}), negAdjs.assign(n, {});
+    std::unordered_map<node_t, node_t> o2n;
+    bool renumber = *std::ranges::max_element(g.nodes) != n - 1;
+    TickSpinner spinner("SignedUndiGraph: Computing adjacency list...", m);
+    if (renumber) {
+        for (const node_t& u : g.nodes)
+            o2n[u] = o2n.size();
+        for (const auto& [e, w] : g.edges) {
+            const auto& [u, v] = e;
+            node_t newU = o2n[u], newV = o2n[v];
+            if (w > 0)
+                posAdjs[newU].push_back(newV), posAdjs[newV].push_back(newU);
+            else
+                negAdjs[newU].push_back(newV), negAdjs[newV].push_back(newU);
+            spinner.tick();
+        }
+    } else {
+        for (const auto& [e, w] : g.edges) {
+            const auto& [u, v] = e;
+            if (w > 0)
+                posAdjs[u].push_back(v), posAdjs[v].push_back(u);
+            else
+                negAdjs[u].push_back(v), negAdjs[v].push_back(u);
+            spinner.tick();
+        }
+    }
+    spinner.markAsCompleted();
+    for (node_t u = 0; u < n; u++) {
+        std::ranges::sort(posAdjs[u]);
+        std::ranges::sort(negAdjs[u]);
+    }
+    std::unordered_set<node_t> nodes;
+    std::map<std::pair<node_t, node_t>, weight_t> edges;
+    nodes.swap(g.nodes);
+    edges.swap(g.edges);
+}
+SignedUndiGraph::SignedUndiGraph(std::string&& name, std::istream& in)
+    : SignedUndiGraph(WeightedUndiGraph(std::move(name), in))
+{
+}
+SignedUndiGraph::SignedUndiGraph(std::string&& name, const std::filesystem::path& source)
+    : SignedUndiGraph(WeightedUndiGraph(std::move(name), source))
 {
 }
 }

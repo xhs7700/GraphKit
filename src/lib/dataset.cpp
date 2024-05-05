@@ -170,6 +170,26 @@ SimpleDiGraph LoadSimpleDiKonect(std::string& internalName)
     std::string name(internalName);
     return LoadSimpleDiKonect(internalName, std::move(name));
 }
+SignedUndiGraph LoadSignedUndiKonect(std::string& internalName, std::string&& name)
+{
+    const fs::path source = GetKonectPath(internalName);
+    return SignedUndiGraph(std::move(name), source);
+}
+SignedDiGraph LoadSignedDiKonect(std::string& internalName, std::string&& name)
+{
+    const fs::path source = GetKonectPath(internalName);
+    return SignedDiGraph(std::move(name), source);
+}
+SignedUndiGraph LoadSignedUndiKonect(std::string& internalName)
+{
+    std::string name(internalName);
+    return LoadSignedUndiKonect(internalName, std::move(name));
+}
+SignedDiGraph LoadSignedDiKonect(std::string& internalName)
+{
+    std::string name(internalName);
+    return LoadSignedDiKonect(internalName, std::move(name));
+}
 
 UnweightedUndiGraph LoadUnweightedUndiSnap(std::string& url, std::string&& name)
 {
@@ -186,6 +206,11 @@ SimpleUndiGraph LoadSimpleUndiSnap(std::string& url, std::string&& name)
     const fs::path source = GetSnapPath(url);
     return SimpleUndiGraph(std::move(name), source);
 }
+SignedUndiGraph LoadSignedUndiSnap(std::string& url, std::string&& name)
+{
+    const fs::path source = GetSnapPath(url);
+    return SignedUndiGraph(std::move(name), source);
+}
 UnweightedDiGraph LoadUnweightedDiSnap(std::string& url, std::string&& name)
 {
     const fs::path source = GetSnapPath(url);
@@ -200,5 +225,10 @@ SimpleDiGraph LoadSimpleDiSnap(std::string& url, std::string&& name)
 {
     const fs::path source = GetSnapPath(url);
     return SimpleDiGraph(std::move(name), source);
+}
+SignedDiGraph LoadSignedDiSnap(std::string& url, std::string&& name)
+{
+    const fs::path source = GetSnapPath(url);
+    return SignedDiGraph(std::move(name), source);
 }
 }

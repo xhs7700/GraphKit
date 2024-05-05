@@ -1,6 +1,7 @@
 #include "graphkit.h"
 #include "utils.h"
 #include <algorithm>
+#include <bits/ranges_algo.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <string>
@@ -89,6 +90,50 @@ std::ostream& operator<<(std::ostream& os, const SimpleDiGraph& g)
     for (node_t u = 0; u < g.n; u++) {
         for (const node_t& v : g.adjs[u]) {
             std::string line = fmt::format("{}\t{}\n", u, v);
+            os << line;
+            spinner.tick();
+        }
+    }
+    spinner.markAsCompleted();
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const SignedUndiGraph& g)
+{
+    std::string desc = fmt::format("# SignedUndiGraph: {}\n# Nodes: {} Edges: {}\n", g.name, g.nodeNum(), g.edgeNum());
+    os << desc;
+    TickSpinner spinner(fmt::format("Writing SignedUndiGraph {}...", g.name), g.edgeNum());
+    for (node_t u = 0; u < g.n; u++) {
+        const std::vector<node_t>&posAdj = g.posAdjs[u], &negAdj = g.negAdjs[u];
+        auto posIt = std::ranges::upper_bound(posAdj, u), negIt = std::ranges::upper_bound(negAdj, u);
+        std::for_each(posIt, posAdj.cend(), [&](const node_t& v) {
+            std::string line = fmt::format("{}\t{}\t+1\n", u, v);
+            os << line;
+            spinner.tick();
+        });
+        std::for_each(negIt, negAdj.cend(), [&](const node_t& v) {
+            std::string line = fmt::format("{}\t{}\t-1\n", u, v);
+            os << line;
+            spinner.tick();
+        });
+    }
+    spinner.markAsCompleted();
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const SignedDiGraph& g)
+{
+    std::string desc = fmt::format("# SignedDiGraph: {}\n# Nodes: {} Edges: {}\n", g.name, g.nodeNum(), g.edgeNum());
+    os << desc;
+    TickSpinner spinner(fmt::format("Writing SignedDiGraph {}...", g.name), g.edgeNum());
+    for (node_t u = 0; u < g.n; u++) {
+        for (const node_t& v : g.posAdjs[u]) {
+            std::string line = fmt::format("{}\t{}\t+1\n", u, v);
+            os << line;
+            spinner.tick();
+        }
+        for (const node_t& v : g.negAdjs[u]) {
+            std::string line = fmt::format("{}\t{}\t-1\n", u, v);
             os << line;
             spinner.tick();
         }

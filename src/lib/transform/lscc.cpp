@@ -195,4 +195,70 @@ SimpleDiGraph::SimpleDiGraph(std::string&& name, const std::filesystem::path& so
     : SimpleDiGraph(UnweightedDiGraph(std::move(name), source))
 {
 }
+
+SignedDiGraph::SignedDiGraph(WeightedDiGraph&& g)
+    : name(std::move(g.name))
+{
+    TarjanImpl tarjanImpl(g);
+    node_t rootLSCC = tarjanImpl.maxKey();
+    auto outOfLSCC = [&tarjanImpl, &rootLSCC](node_t u) { return tarjanImpl.sccID[u] != rootLSCC; };
+    std::erase_if(g.adjs, [&outOfLSCC](std::pair<node_t, std::vector<std::pair<node_t, weight_t>>> p) { return outOfLSCC(p.first); });
+    n = g.nodeNum();
+    m = 0ull;
+    node_t max_node = 0ull;
+    TickSpinner spinner1("SimpleDiGraph: Removing nodes out of LSCC...", n);
+    for (auto& [u, adj] : g.adjs) {
+        max_node = std::max(max_node, u);
+        std::erase_if(adj, [&outOfLSCC](std::pair<node_t, weight_t> p) { return outOfLSCC(p.first); });
+        m += adj.size();
+        spinner1.tick();
+    }
+    spinner1.markAsCompleted();
+    std::unordered_map<node_t, node_t> o2n;
+    posAdjs.assign(n, {}), negAdjs.assign(n, {});
+    bool renumber = max_node != n - 1;
+    TickSpinner spinner2("SimpleDiGraph: Computing adjacency list...", m);
+    if (renumber) {
+        for (const auto& [u, _] : g.adjs)
+            o2n[u] = o2n.size();
+        for (const auto& [u, adj] : g.adjs) {
+            node_t newU = o2n[u];
+            for (const auto& [v, w] : adj) {
+                node_t newV = o2n[v];
+                if (w > 0)
+                    posAdjs[newU].push_back(newV);
+                else
+                    negAdjs[newU].push_back(newV);
+                spinner2.tick();
+            }
+            std::ranges::sort(posAdjs[newU]);
+            std::ranges::sort(negAdjs[newU]);
+        }
+    } else {
+        for (const auto& [u, adj] : g.adjs) {
+            for (const auto& [v, w] : adj) {
+                if (w > 0)
+                    posAdjs[u].push_back(v);
+                else
+                    negAdjs[u].push_back(v);
+                spinner2.tick();
+            }
+            std::ranges::sort(posAdjs[u]);
+            std::ranges::sort(negAdjs[u]);
+        }
+    }
+    spinner2.markAsCompleted();
+    std::unordered_map<node_t, std::vector<std::pair<node_t, weight_t>>> adjs;
+    std::map<std::pair<node_t, node_t>, weight_t> edges;
+    adjs.swap(g.adjs);
+    edges.swap(g.edges);
+}
+SignedDiGraph::SignedDiGraph(std::string&& name, std::istream& in)
+    : SignedDiGraph(WeightedDiGraph(std::move(name), in))
+{
+}
+SignedDiGraph::SignedDiGraph(std::string&& name, const std::filesystem::path& source)
+    : SignedDiGraph(WeightedDiGraph(std::move(name), source))
+{
+}
 }

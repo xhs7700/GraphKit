@@ -180,12 +180,75 @@ struct SimpleDiGraph {
     Eigen::SparseMatrix<double> degrMat();
     Eigen::SparseMatrix<double> adjMat();
 };
+
+struct SignedUndiGraph {
+    node_t n, m;
+    std::string name;
+    std::vector<std::vector<node_t>> posAdjs, negAdjs;
+    SignedUndiGraph(node_t n, node_t m, std::string&& name, std::vector<std::vector<node_t>>&& posAdjs, std::vector<std::vector<node_t>>&& negAdjs)
+        : n(n)
+        , m(m)
+        , name(name)
+        , posAdjs(posAdjs)
+        , negAdjs(negAdjs)
+    {
+    }
+    SignedUndiGraph(const SignedUndiGraph& g)
+        : n(g.n)
+        , m(g.m)
+        , name(g.name)
+        , posAdjs(g.posAdjs)
+        , negAdjs(g.negAdjs)
+    {
+    }
+    SignedUndiGraph(WeightedUndiGraph&& g);
+    SignedUndiGraph(std::string&& name, std::istream& in);
+    SignedUndiGraph(std::string&& name, const std::filesystem::path& source);
+    node_t nodeNum() const { return n; }
+    node_t edgeNum() const { return m; }
+    Eigen::VectorXd degrVec();
+    Eigen::SparseMatrix<double> degrMat();
+    Eigen::SparseMatrix<double> adjMat();
+};
+
+struct SignedDiGraph {
+    node_t n, m;
+    std::string name;
+    std::vector<std::vector<node_t>> posAdjs, negAdjs;
+    SignedDiGraph(node_t n, node_t m, std::string&& name, std::vector<std::vector<node_t>>&& posAdjs, std::vector<std::vector<node_t>>&& negAdjs)
+        : n(n)
+        , m(m)
+        , name(name)
+        , posAdjs(posAdjs)
+        , negAdjs(negAdjs)
+    {
+    }
+    SignedDiGraph(const SignedDiGraph& g)
+        : n(g.n)
+        , m(g.m)
+        , name(g.name)
+        , posAdjs(g.posAdjs)
+        , negAdjs(g.negAdjs)
+    {
+    }
+    SignedDiGraph(WeightedDiGraph&& g);
+    SignedDiGraph(std::string&& name, std::istream& in);
+    SignedDiGraph(std::string&& name, const std::filesystem::path& source);
+    node_t nodeNum() const { return n; }
+    node_t edgeNum() const { return m; }
+    Eigen::VectorXd degrVec();
+    Eigen::SparseMatrix<double> degrMat();
+    Eigen::SparseMatrix<double> adjMat();
+};
+
 std::ostream& operator<<(std::ostream& os, const UnweightedUndiGraph& g);
 std::ostream& operator<<(std::ostream& os, const WeightedUndiGraph& g);
 std::ostream& operator<<(std::ostream& os, const SimpleUndiGraph& g);
 std::ostream& operator<<(std::ostream& os, const UnweightedDiGraph& g);
 std::ostream& operator<<(std::ostream& os, const WeightedDiGraph& g);
 std::ostream& operator<<(std::ostream& os, const SimpleDiGraph& g);
+std::ostream& operator<<(std::ostream& os, const SignedUndiGraph& g);
+std::ostream& operator<<(std::ostream& os, const SignedDiGraph& g);
 
 std::filesystem::path GetKonectPath(const std::string& internalName);
 std::filesystem::path GetSnapPath(const std::string& url);
@@ -202,6 +265,10 @@ SimpleUndiGraph LoadSimpleUndiKonect(std::string& internalName, std::string&& na
 SimpleUndiGraph LoadSimpleUndiKonect(std::string& internalName);
 SimpleUndiGraph LoadSimpleUndiSnap(std::string& url, std::string&& name);
 
+SignedUndiGraph LoadSignedUndiKonect(std::string& internalName, std::string&& name);
+SignedUndiGraph LoadSignedUndiKonect(std::string& internalName);
+SignedUndiGraph LoadSignedUndiSnap(std::string& url, std::string&& name);
+
 UnweightedDiGraph LoadUnweightedDiKonect(std::string& internalName, std::string&& name);
 UnweightedDiGraph LoadUnweightedDiKonect(std::string& internalName);
 UnweightedDiGraph LoadUnweightedDiSnap(std::string& url, std::string&& name);
@@ -213,6 +280,10 @@ WeightedDiGraph LoadWeightedDiSnap(std::string& url, std::string&& name);
 SimpleDiGraph LoadSimpleDiKonect(std::string& internalName, std::string&& name);
 SimpleDiGraph LoadSimpleDiKonect(std::string& internalName);
 SimpleDiGraph LoadSimpleDiSnap(std::string& url, std::string&& name);
+
+SignedDiGraph LoadSignedDiKonect(std::string& internalName, std::string&& name);
+SignedDiGraph LoadSignedDiKonect(std::string& internalName);
+SignedDiGraph LoadSignedDiSnap(std::string& url, std::string&& name);
 
 SimpleUndiGraph LoadPseudoExt(std::uint64_t m, std::uint64_t g);
 SimpleUndiGraph LoadPseudo(std::uint64_t g);

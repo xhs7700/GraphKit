@@ -43,6 +43,14 @@ void SyntheticTest()
     fout << g;
 }
 
+void SignedTest()
+{
+    std::string internalName("convote");
+    auto g = gkit::LoadSignedDiKonect(internalName, "Congress votes");
+    std::ofstream fout(std::filesystem::path(PROJECT_DIR) / "tmp" / "convote.txt");
+    fout << g;
+}
+
 int main(int argc, char** argv)
 {
     return 0;
