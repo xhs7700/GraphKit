@@ -206,7 +206,7 @@ SignedDiGraph::SignedDiGraph(WeightedDiGraph&& g)
     n = g.nodeNum();
     m = 0ull;
     node_t max_node = 0ull;
-    TickSpinner spinner1("SimpleDiGraph: Removing nodes out of LSCC...", n);
+    TickSpinner spinner1("SignedDiGraph: Removing nodes out of LSCC...", n);
     for (auto& [u, adj] : g.adjs) {
         max_node = std::max(max_node, u);
         std::erase_if(adj, [&outOfLSCC](std::pair<node_t, weight_t> p) { return outOfLSCC(p.first); });
@@ -217,7 +217,7 @@ SignedDiGraph::SignedDiGraph(WeightedDiGraph&& g)
     std::unordered_map<node_t, node_t> o2n;
     posAdjs.assign(n, {}), negAdjs.assign(n, {});
     bool renumber = max_node != n - 1;
-    TickSpinner spinner2("SimpleDiGraph: Computing adjacency list...", m);
+    TickSpinner spinner2("SignedDiGraph: Computing adjacency list...", m);
     if (renumber) {
         for (const auto& [u, _] : g.adjs)
             o2n[u] = o2n.size();
