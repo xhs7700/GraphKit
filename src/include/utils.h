@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint>
 #include <indicators/progress_spinner.hpp>
 #include <string>
