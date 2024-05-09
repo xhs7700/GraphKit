@@ -1,5 +1,5 @@
 #include "graphkit.h"
-#include "utils.h"
+#include "graphkitutils.h"
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <vector>

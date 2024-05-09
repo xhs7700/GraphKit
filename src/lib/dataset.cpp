@@ -1,5 +1,5 @@
 #include "graphkit.h"
-#include "utils.h"
+#include "graphkitutils.h"
 #include <archive.h>
 #include <archive_entry.h>
 #include <cpr/callback.h>

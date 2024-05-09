@@ -1,5 +1,5 @@
 #include "graphkit.h"
-#include "utils.h"
+#include "graphkitutils.h"
 #include <algorithm>
 #include <bits/ranges_algo.h>
 #include <fmt/core.h>

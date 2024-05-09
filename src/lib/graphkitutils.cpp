@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "graphkitutils.h"
 #include <indicators/color.hpp>
 #include <indicators/font_style.hpp>
 #include <indicators/progress_spinner.hpp>
