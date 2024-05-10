@@ -4,14 +4,14 @@
 #include <vector>
 
 namespace gkit {
-Eigen::VectorXd SimpleUndiGraph::degrVec()
+Eigen::VectorXd SimpleUndiGraph::degrVec() const
 {
     Eigen::VectorXd degr(n);
     for (int i = 0; i < n; i++)
         degr[i] = adjs[i].size();
     return degr;
 }
-Eigen::SparseMatrix<double> SimpleUndiGraph::degrMat()
+Eigen::SparseMatrix<double> SimpleUndiGraph::degrMat() const
 {
     std::vector<Eigen::Triplet<double>> tripletVec(n);
     for (int i = 0; i < n; i++)
@@ -20,7 +20,7 @@ Eigen::SparseMatrix<double> SimpleUndiGraph::degrMat()
     degr.setFromTriplets(tripletVec.cbegin(), tripletVec.cend());
     return degr;
 }
-Eigen::SparseMatrix<double> SimpleUndiGraph::adjMat()
+Eigen::SparseMatrix<double> SimpleUndiGraph::adjMat() const
 {
     std::vector<Eigen::Triplet<double>> tripletVec;
     tripletVec.reserve(m << 1);
@@ -32,14 +32,14 @@ Eigen::SparseMatrix<double> SimpleUndiGraph::adjMat()
     return adjSpMat;
 }
 
-Eigen::VectorXd SimpleDiGraph::degrVec()
+Eigen::VectorXd SimpleDiGraph::degrVec() const
 {
     Eigen::VectorXd degr(n);
     for (int i = 0; i < n; i++)
         degr[i] = adjs[i].size();
     return degr;
 }
-Eigen::SparseMatrix<double> SimpleDiGraph::degrMat()
+Eigen::SparseMatrix<double> SimpleDiGraph::degrMat() const
 {
     std::vector<Eigen::Triplet<double>> tripletVec(n);
     for (int i = 0; i < n; i++)
@@ -48,7 +48,7 @@ Eigen::SparseMatrix<double> SimpleDiGraph::degrMat()
     degr.setFromTriplets(tripletVec.cbegin(), tripletVec.cend());
     return degr;
 }
-Eigen::SparseMatrix<double> SimpleDiGraph::adjMat()
+Eigen::SparseMatrix<double> SimpleDiGraph::adjMat() const
 {
     std::vector<Eigen::Triplet<double>> tripletVec;
     tripletVec.reserve(m);
@@ -60,14 +60,14 @@ Eigen::SparseMatrix<double> SimpleDiGraph::adjMat()
     return adjSpMat;
 }
 
-Eigen::VectorXd SignedUndiGraph::degrVec()
+Eigen::VectorXd SignedUndiGraph::degrVec() const
 {
     Eigen::VectorXd degr(n);
     for (int i = 0; i < n; i++)
         degr[i] = posAdjs[i].size() + negAdjs[i].size();
     return degr;
 }
-Eigen::SparseMatrix<double> SignedUndiGraph::degrMat()
+Eigen::SparseMatrix<double> SignedUndiGraph::degrMat() const
 {
     std::vector<Eigen::Triplet<double>> tripletVec(n);
     for (int i = 0; i < n; i++)
@@ -76,7 +76,7 @@ Eigen::SparseMatrix<double> SignedUndiGraph::degrMat()
     degr.setFromTriplets(tripletVec.cbegin(), tripletVec.cend());
     return degr;
 }
-Eigen::SparseMatrix<double> SignedUndiGraph::adjMat()
+Eigen::SparseMatrix<double> SignedUndiGraph::adjMat() const
 {
     std::vector<Eigen::Triplet<double>> tripletVec;
     tripletVec.reserve(m << 1);
@@ -91,14 +91,14 @@ Eigen::SparseMatrix<double> SignedUndiGraph::adjMat()
     return adjSpMat;
 }
 
-Eigen::VectorXd SignedDiGraph::degrVec()
+Eigen::VectorXd SignedDiGraph::degrVec() const
 {
     Eigen::VectorXd degr(n);
     for (int i = 0; i < n; i++)
         degr[i] = posAdjs[i].size() + negAdjs[i].size();
     return degr;
 }
-Eigen::SparseMatrix<double> SignedDiGraph::degrMat()
+Eigen::SparseMatrix<double> SignedDiGraph::degrMat() const
 {
     std::vector<Eigen::Triplet<double>> tripletVec(n);
     for (int i = 0; i < n; i++)
@@ -107,7 +107,7 @@ Eigen::SparseMatrix<double> SignedDiGraph::degrMat()
     degr.setFromTriplets(tripletVec.cbegin(), tripletVec.cend());
     return degr;
 }
-Eigen::SparseMatrix<double> SignedDiGraph::adjMat()
+Eigen::SparseMatrix<double> SignedDiGraph::adjMat() const
 {
     std::vector<Eigen::Triplet<double>> tripletVec;
     tripletVec.reserve(m);

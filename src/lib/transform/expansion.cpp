@@ -27,7 +27,7 @@ SimpleDiGraph::SimpleDiGraph(SignedDiGraph&& g)
     posAdjs.swap(g.posAdjs), negAdjs.swap(g.negAdjs);
 }
 
-SimpleUndiGraph SignedUndiGraph::expansion()
+SimpleUndiGraph SignedUndiGraph::expansion() const
 {
     std::string newName(name);
     std::vector<std::vector<node_t>> adjs(n << 1);
@@ -45,7 +45,7 @@ SimpleUndiGraph SignedUndiGraph::expansion()
     }
     return SimpleUndiGraph(n << 1, m << 1, std::move(newName), std::move(adjs));
 }
-SimpleDiGraph SignedDiGraph::expansion()
+SimpleDiGraph SignedDiGraph::expansion() const
 {
     std::string newName(name);
     std::vector<std::vector<node_t>> adjs(n << 1);

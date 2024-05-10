@@ -160,9 +160,9 @@ struct SimpleUndiGraph {
     SimpleUndiGraph(std::string&& name, const std::filesystem::path& source);
     node_t nodeNum() const { return n; }
     node_t edgeNum() const { return m; }
-    Eigen::VectorXd degrVec();
-    Eigen::SparseMatrix<double> degrMat();
-    Eigen::SparseMatrix<double> adjMat();
+    Eigen::VectorXd degrVec() const;
+    Eigen::SparseMatrix<double> degrMat() const;
+    Eigen::SparseMatrix<double> adjMat() const;
 };
 
 struct SimpleDiGraph {
@@ -189,9 +189,9 @@ struct SimpleDiGraph {
     SimpleDiGraph(std::string&& name, const std::filesystem::path& source);
     node_t nodeNum() const { return n; }
     node_t edgeNum() const { return m; }
-    Eigen::VectorXd degrVec();
-    Eigen::SparseMatrix<double> degrMat();
-    Eigen::SparseMatrix<double> adjMat();
+    Eigen::VectorXd degrVec() const;
+    Eigen::SparseMatrix<double> degrMat() const;
+    Eigen::SparseMatrix<double> adjMat() const;
 };
 
 struct SignedUndiGraph {
@@ -219,10 +219,10 @@ struct SignedUndiGraph {
     SignedUndiGraph(std::string&& name, const std::filesystem::path& source);
     node_t nodeNum() const { return n; }
     node_t edgeNum() const { return m; }
-    Eigen::VectorXd degrVec();
-    Eigen::SparseMatrix<double> degrMat();
-    Eigen::SparseMatrix<double> adjMat();
-    SimpleUndiGraph expansion();
+    Eigen::VectorXd degrVec() const;
+    Eigen::SparseMatrix<double> degrMat() const;
+    Eigen::SparseMatrix<double> adjMat() const;
+    SimpleUndiGraph expansion() const;
 };
 
 struct SignedDiGraph {
@@ -250,10 +250,10 @@ struct SignedDiGraph {
     SignedDiGraph(std::string&& name, const std::filesystem::path& source);
     node_t nodeNum() const { return n; }
     node_t edgeNum() const { return m; }
-    Eigen::VectorXd degrVec();
-    Eigen::SparseMatrix<double> degrMat();
-    Eigen::SparseMatrix<double> adjMat();
-    SimpleDiGraph expansion();
+    Eigen::VectorXd degrVec() const;
+    Eigen::SparseMatrix<double> degrMat() const;
+    Eigen::SparseMatrix<double> adjMat() const;
+    SimpleDiGraph expansion() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const UnweightedUndiGraph& g);
