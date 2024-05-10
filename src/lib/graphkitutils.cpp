@@ -51,3 +51,17 @@ void TickSpinner::tick(std::uint64_t tickNum)
         spinner.set_progress(newPercent);
     }
 }
+
+UnknownSpinner::UnknownSpinner(std::string postfixText)
+    : postfixText(postfixText)
+    , spinner(
+          indicators::option::PostfixText { postfixText },
+          indicators::option::FontStyles { std::vector<indicators::FontStyle> { indicators::FontStyle::bold } },
+          indicators::option::ShowElapsedTime { true },
+          indicators::option::ShowPercentage { false },
+          indicators::option::ShowRemainingTime { false },
+          indicators::option::ShowSpinner { false },
+          indicators::option::ForegroundColor { indicators::Color::green })
+{
+    spinner.set_progress(0);
+}

@@ -23,3 +23,14 @@ struct TickSpinner {
     void tick(std::uint64_t tickNum = 1);
     void markAsCompleted() { spinner.mark_as_completed(); }
 };
+
+struct UnknownSpinner {
+    indicators::ProgressSpinner spinner;
+    std::string postfixText;
+    UnknownSpinner(std::string postfixText);
+    void markAsCompleted()
+    {
+        spinner.set_progress(100);
+        spinner.mark_as_completed();
+    }
+};
