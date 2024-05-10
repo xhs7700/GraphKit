@@ -38,6 +38,16 @@ void SignedTest()
     fout << g;
 }
 
+void ExpansionTest()
+{
+    auto filePath = std::filesystem::path(PROJECT_DIR) / "tmp" / "toy_raw.txt";
+    gkit::SignedUndiGraph g("toy", filePath);
+    std::ofstream fout1(std::filesystem::path(PROJECT_DIR) / "tmp" / "toy.txt");
+    std::ofstream fout2(std::filesystem::path(PROJECT_DIR) / "tmp" / "toy_expansion.txt");
+    fout1 << g;
+    fout2 << g.expansion();
+}
+
 int main(int argc, char** argv)
 {
     return 0;

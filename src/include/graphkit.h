@@ -16,6 +16,16 @@
 namespace gkit {
 using node_t = std::uint64_t;
 using weight_t = std::int64_t;
+
+struct UnweightedUndiGraph;
+struct UnweightedDiGraph;
+struct WeightedUndiGraph;
+struct WeightedDiGraph;
+struct SimpleUndiGraph;
+struct SimpleDiGraph;
+struct SignedUndiGraph;
+struct SignedDiGraph;
+
 struct UnweightedUndiGraph {
     std::string name;
     std::unordered_set<node_t> nodes;
@@ -145,6 +155,7 @@ struct SimpleUndiGraph {
     {
     }
     SimpleUndiGraph(UnweightedUndiGraph&& g);
+    SimpleUndiGraph(SignedUndiGraph&& g);
     SimpleUndiGraph(std::string&& name, std::istream& in);
     SimpleUndiGraph(std::string&& name, const std::filesystem::path& source);
     node_t nodeNum() const { return n; }
@@ -173,6 +184,7 @@ struct SimpleDiGraph {
     {
     }
     SimpleDiGraph(UnweightedDiGraph&& g);
+    SimpleDiGraph(SignedDiGraph&& g);
     SimpleDiGraph(std::string&& name, std::istream& in);
     SimpleDiGraph(std::string&& name, const std::filesystem::path& source);
     node_t nodeNum() const { return n; }
@@ -210,6 +222,7 @@ struct SignedUndiGraph {
     Eigen::VectorXd degrVec();
     Eigen::SparseMatrix<double> degrMat();
     Eigen::SparseMatrix<double> adjMat();
+    SimpleUndiGraph expansion();
 };
 
 struct SignedDiGraph {
@@ -240,6 +253,7 @@ struct SignedDiGraph {
     Eigen::VectorXd degrVec();
     Eigen::SparseMatrix<double> degrMat();
     Eigen::SparseMatrix<double> adjMat();
+    SimpleDiGraph expansion();
 };
 
 std::ostream& operator<<(std::ostream& os, const UnweightedUndiGraph& g);
