@@ -189,6 +189,7 @@ struct SimpleDiGraph {
     SimpleDiGraph(std::string&& name, const std::filesystem::path& source);
     node_t nodeNum() const { return n; }
     node_t edgeNum() const { return m; }
+    std::vector<std::vector<node_t>> InvAdjs() const;
     Eigen::VectorXd degrVec() const;
     Eigen::SparseMatrix<double> degrMat() const;
     Eigen::SparseMatrix<double> adjMat() const;
