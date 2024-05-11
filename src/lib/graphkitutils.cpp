@@ -1,4 +1,5 @@
 #include "graphkitutils.h"
+#include <chrono>
 #include <indicators/color.hpp>
 #include <indicators/font_style.hpp>
 #include <indicators/progress_spinner.hpp>
@@ -52,8 +53,10 @@ void TickSpinner::tick(std::uint64_t tickNum)
     }
 }
 
-UnknownSpinner::UnknownSpinner(std::string postfixText)
+UnknownSpinner::UnknownSpinner(std::string postfixText, std::chrono::milliseconds latency)
     : postfixText(postfixText)
+    , latency(latency)
+    , prevTime(std::chrono::steady_clock::now())
     , spinner(
           indicators::option::PostfixText { postfixText },
           indicators::option::FontStyles { std::vector<indicators::FontStyle> { indicators::FontStyle::bold } },
@@ -64,4 +67,12 @@ UnknownSpinner::UnknownSpinner(std::string postfixText)
           indicators::option::ForegroundColor { indicators::Color::green })
 {
     spinner.set_progress(0);
+}
+void UnknownSpinner::tick()
+{
+    const auto curTime = std::chrono::steady_clock::now();
+    if (curTime - prevTime > latency) {
+        spinner.set_progress(0);
+        prevTime = curTime;
+    }
 }

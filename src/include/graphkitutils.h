@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+#include <chrono>
 #include <indicators/progress_spinner.hpp>
 #include <string>
 
@@ -27,7 +27,10 @@ struct TickSpinner {
 struct UnknownSpinner {
     indicators::ProgressSpinner spinner;
     std::string postfixText;
-    UnknownSpinner(std::string postfixText);
+    std::chrono::milliseconds latency;
+    std::chrono::time_point<std::chrono::steady_clock> prevTime;
+    UnknownSpinner(std::string postfixText, std::chrono::milliseconds latency);
+    void tick();
     void markAsCompleted()
     {
         spinner.set_progress(100);
