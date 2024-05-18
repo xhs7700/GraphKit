@@ -1,7 +1,6 @@
 #include "graphkit.h"
 #include "graphkitutils.h"
 #include <algorithm>
-#include <bits/ranges_algo.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <string>
