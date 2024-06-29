@@ -1,5 +1,4 @@
 #include "graphkit.h"
-#include "graphkitutils.h"
 #include <algorithm>
 #include <fmt/core.h>
 #include <iterator>

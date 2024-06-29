@@ -9,21 +9,26 @@ option("spinner")
     set_default(true)
     add_defines("SPINNER")
 
+target("utils")
+    set_kind("static")
+    add_includedirs("src/include", {public = true})
+    add_files("src/lib/utils/*.cpp")
+    add_packages("indicators", {public = true})
+
 target("graphkit")
-    set_kind("shared")
+    set_kind("static")
     add_options("spinner")
-    add_includedirs("src/include")
+    add_includedirs("src/include", {public = true})
     add_headerfiles("src/include/graphkit.h")
-    add_files("src/lib/**.cpp")
-    add_packages("libarchive", "fmt", "indicators", "cpr", "eigen")
+    add_files("src/lib/graphkit/**.cpp")
+    add_packages("libarchive", "fmt", "cpr", "eigen", {public = true})
+    add_deps("utils")
 
 target("test")
     set_kind("binary")
     add_files("src/test/main.cpp")
     add_defines("PROJECT_DIR=\"$(projectdir)\"")
     add_deps("graphkit")
-    add_includedirs("src/include")
-    add_packages("fmt", "eigen")
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
