@@ -8,8 +8,6 @@
 #include <ostream>
 #include <set>
 #include <string>
-#include <unordered_map>
-#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -28,9 +26,9 @@ struct SignedDiGraph;
 
 struct UnweightedUndiGraph {
     std::string name;
-    std::unordered_set<node_t> nodes;
+    std::set<node_t> nodes;
     std::set<std::pair<node_t, node_t>> edges;
-    UnweightedUndiGraph(std::string&& name, std::unordered_set<node_t>&& nodes, std::set<std::pair<node_t, node_t>>&& edges)
+    UnweightedUndiGraph(std::string&& name, std::set<node_t>&& nodes, std::set<std::pair<node_t, node_t>>&& edges)
         : name(name)
         , nodes(nodes)
         , edges(edges)
@@ -54,9 +52,9 @@ struct UnweightedUndiGraph {
 
 struct UnweightedDiGraph {
     std::string name;
-    std::unordered_map<node_t, std::vector<node_t>> adjs;
+    std::map<node_t, std::vector<node_t>> adjs;
     std::set<std::pair<node_t, node_t>> edges;
-    UnweightedDiGraph(std::string&& name, std::unordered_map<node_t, std::vector<node_t>>&& adjs, std::set<std::pair<node_t, node_t>>&& edges)
+    UnweightedDiGraph(std::string&& name, std::map<node_t, std::vector<node_t>>&& adjs, std::set<std::pair<node_t, node_t>>&& edges)
         : name(name)
         , adjs(adjs)
         , edges(edges)
@@ -80,9 +78,9 @@ struct UnweightedDiGraph {
 
 struct WeightedUndiGraph {
     std::string name;
-    std::unordered_set<node_t> nodes;
+    std::set<node_t> nodes;
     std::map<std::pair<node_t, node_t>, weight_t> edges;
-    WeightedUndiGraph(std::string&& name, std::unordered_set<node_t>&& nodes, std::map<std::pair<node_t, node_t>, weight_t>&& edges)
+    WeightedUndiGraph(std::string&& name, std::set<node_t>&& nodes, std::map<std::pair<node_t, node_t>, weight_t>&& edges)
         : name(name)
         , nodes(nodes)
         , edges(edges)
@@ -109,9 +107,9 @@ struct WeightedUndiGraph {
 
 struct WeightedDiGraph {
     std::string name;
-    std::unordered_map<node_t, std::vector<std::pair<node_t, weight_t>>> adjs;
+    std::map<node_t, std::vector<std::pair<node_t, weight_t>>> adjs;
     std::map<std::pair<node_t, node_t>, weight_t> edges;
-    WeightedDiGraph(std::string&& name, std::unordered_map<node_t, std::vector<std::pair<node_t, weight_t>>>&& adjs, std::map<std::pair<node_t, node_t>, weight_t>&& edges)
+    WeightedDiGraph(std::string&& name, std::map<node_t, std::vector<std::pair<node_t, weight_t>>>&& adjs, std::map<std::pair<node_t, node_t>, weight_t>&& edges)
         : name(name)
         , adjs(adjs)
         , edges(edges)

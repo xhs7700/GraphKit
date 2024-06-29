@@ -103,7 +103,7 @@ UnweightedDiGraph UnweightedDiGraph::LSCC()
     node_t rootLSCC = tarjanImpl.maxKey();
     std::string newName(name);
     newName.append("_LSCC");
-    std::unordered_map<node_t, std::vector<node_t>> newAdjs;
+    std::map<node_t, std::vector<node_t>> newAdjs;
     std::set<std::pair<node_t, node_t>> newEdges;
     auto inLSCC = [&tarjanImpl, &rootLSCC](node_t u) { return tarjanImpl.sccID[u] == rootLSCC; };
     TickSpinner spinner("LSCC: Constructing ans graph...", nodeNum());
@@ -124,7 +124,7 @@ WeightedDiGraph WeightedDiGraph::LSCC()
     node_t rootLSCC = tarjanImpl.maxKey();
     std::string newName(name);
     newName.append("_LSCC");
-    std::unordered_map<node_t, std::vector<std::pair<node_t, weight_t>>> newAdjs;
+    std::map<node_t, std::vector<std::pair<node_t, weight_t>>> newAdjs;
     std::map<std::pair<node_t, node_t>, weight_t> newEdges;
     auto inLSCC = [&tarjanImpl, &rootLSCC](node_t u) { return tarjanImpl.sccID[u] == rootLSCC; };
     TickSpinner spinner("LSCC: Constructing ans graph...", nodeNum());
@@ -182,7 +182,7 @@ SimpleDiGraph::SimpleDiGraph(UnweightedDiGraph&& g)
         }
     }
     spinner2.markAsCompleted();
-    std::unordered_map<node_t, std::vector<node_t>> nullAdjs;
+    std::map<node_t, std::vector<node_t>> nullAdjs;
     std::set<std::pair<node_t, node_t>> edges;
     nullAdjs.swap(g.adjs);
     edges.swap(g.edges);
@@ -248,7 +248,7 @@ SignedDiGraph::SignedDiGraph(WeightedDiGraph&& g)
         }
     }
     spinner2.markAsCompleted();
-    std::unordered_map<node_t, std::vector<std::pair<node_t, weight_t>>> adjs;
+    std::map<node_t, std::vector<std::pair<node_t, weight_t>>> adjs;
     std::map<std::pair<node_t, node_t>, weight_t> edges;
     adjs.swap(g.adjs);
     edges.swap(g.edges);

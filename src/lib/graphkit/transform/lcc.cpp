@@ -102,7 +102,7 @@ UnweightedUndiGraph UnweightedUndiGraph::LCC()
     node_t rootLCC = dsu.maxKey();
     std::string newName(name);
     newName.append("_LCC");
-    std::unordered_set<node_t> newNodes;
+    std::set<node_t> newNodes;
     std::set<std::pair<node_t, node_t>> newEdges;
     auto inLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) == rootLCC; };
     std::ranges::copy_if(nodes, std::inserter(newNodes, newNodes.end()), inLCC);
@@ -115,7 +115,7 @@ WeightedUndiGraph WeightedUndiGraph::LCC()
     node_t rootLCC = dsu.maxKey();
     std::string newName(name);
     newName.append("_LCC");
-    std::unordered_set<node_t> newNodes;
+    std::set<node_t> newNodes;
     std::map<std::pair<node_t, node_t>, weight_t> newEdges;
     auto inLCC = [&dsu, &rootLCC](node_t u) { return dsu.find(u) == rootLCC; };
     std::ranges::copy_if(nodes, std::inserter(newNodes, newNodes.end()), inLCC);
@@ -157,7 +157,7 @@ SimpleUndiGraph::SimpleUndiGraph(UnweightedUndiGraph&& g)
     spinner.markAsCompleted();
     for (node_t u = 0; u < n; u++)
         std::ranges::sort(adjs[u]);
-    std::unordered_set<node_t> nodes;
+    std::set<node_t> nodes;
     std::set<std::pair<node_t, node_t>> edges;
     nodes.swap(g.nodes);
     edges.swap(g.edges);
@@ -215,7 +215,7 @@ SignedUndiGraph::SignedUndiGraph(WeightedUndiGraph&& g)
         std::ranges::sort(posAdjs[u]);
         std::ranges::sort(negAdjs[u]);
     }
-    std::unordered_set<node_t> nodes;
+    std::set<node_t> nodes;
     std::map<std::pair<node_t, node_t>, weight_t> edges;
     nodes.swap(g.nodes);
     edges.swap(g.edges);
