@@ -141,6 +141,8 @@ SimpleUndiGraph::SimpleUndiGraph(UnweightedUndiGraph&& g)
     adjs.assign(n, {});
     TickSpinner spinner("SimpleUndiGraph: Computing adjacency list...", m);
     if (renumber) {
+        for (const node_t& u : g.nodes)
+            o2n[u] = o2n.size();
         for (const auto [u, v] : g.edges) {
             node_t newU = o2n[u], newV = o2n[v];
             adjs[newU].push_back(newV), adjs[newV].push_back(newU);
