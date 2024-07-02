@@ -1,6 +1,6 @@
 #include "graphkit.h"
 #include <algorithm>
-#include <fmt/core.h>
+#include <format>
 #include <iterator>
 #include <numeric>
 #include <string>
@@ -41,8 +41,8 @@ SimpleUndiGraph LoadPseudoExt(std::uint64_t m, std::uint64_t g, std::string&& na
     }
     return SimpleUndiGraph(n, edges.size(), std::move(name), std::move(adjs));
 }
-SimpleUndiGraph LoadPseudoExt(std::uint64_t m, std::uint64_t g) { return LoadPseudoExt(m, g, fmt::format("PseudoExt_{}_{}", m, g)); }
-SimpleUndiGraph LoadPseudo(std::uint64_t g) { return LoadPseudoExt(1, g, fmt::format("Pseudofractal_{}", g)); }
+SimpleUndiGraph LoadPseudoExt(std::uint64_t m, std::uint64_t g) { return LoadPseudoExt(m, g, std::format("PseudoExt_{}_{}", m, g)); }
+SimpleUndiGraph LoadPseudo(std::uint64_t g) { return LoadPseudoExt(1, g, std::format("Pseudofractal_{}", g)); }
 SimpleUndiGraph LoadKoch(std::uint64_t g)
 {
     std::vector<std::tuple<node_t, node_t, node_t>> triangles { { 0, 1, 2 } };
@@ -63,7 +63,7 @@ SimpleUndiGraph LoadKoch(std::uint64_t g)
         adjs[y].insert(adjs[y].end(), { x, z });
         adjs[z].insert(adjs[z].end(), { x, y });
     }
-    return SimpleUndiGraph(n, 3 * triangles.size(), fmt::format("Koch_{}", g), std::move(adjs));
+    return SimpleUndiGraph(n, 3 * triangles.size(), std::format("Koch_{}", g), std::move(adjs));
 }
 SimpleUndiGraph LoadCayleyTree(std::uint64_t b, std::uint64_t g, std::string&& name)
 {
@@ -91,7 +91,7 @@ SimpleUndiGraph LoadCayleyTree(std::uint64_t b, std::uint64_t g, std::string&& n
     }
     return SimpleUndiGraph(n, edges.size(), std::move(name), std::move(adjs));
 }
-SimpleUndiGraph LoadCayleyTree(std::uint64_t b, std::uint64_t g) { return LoadCayleyTree(b, g, fmt::format("{}CayleyTree_{}", b, g)); }
+SimpleUndiGraph LoadCayleyTree(std::uint64_t b, std::uint64_t g) { return LoadCayleyTree(b, g, std::format("{}CayleyTree_{}", b, g)); }
 SimpleUndiGraph Load3CayleyTree(std::uint64_t g) { return LoadCayleyTree(3, g); }
 SimpleUndiGraph LoadApollo(std::uint64_t g)
 {
@@ -113,6 +113,6 @@ SimpleUndiGraph LoadApollo(std::uint64_t g)
         std::ranges::copy(newTri, std::back_inserter(triangles));
         activTri.swap(newTri);
     }
-    return SimpleUndiGraph(n, m, fmt::format("Apollo_{}", g), std::move(adjs));
+    return SimpleUndiGraph(n, m, std::format("Apollo_{}", g), std::move(adjs));
 }
 }

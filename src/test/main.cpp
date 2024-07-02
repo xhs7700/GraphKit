@@ -1,9 +1,8 @@
 #include "graphkit.h"
 #include <filesystem>
-#include <fmt/core.h>
-#include <fmt/format.h>
-#include <fmt/ranges.h>
+#include <format>
 #include <fstream>
+#include <iostream>
 #include <string>
 
 void KonectTest()
@@ -25,8 +24,8 @@ void SnapTest()
 void SyntheticTest()
 {
     auto g = gkit::LoadApollo(14);
-    fmt::println("size of g is ({}, {}).", g.nodeNum(), g.edgeNum());
-    std::ofstream fout(std::filesystem::path(PROJECT_DIR) / "tmp" / fmt::format("{}.txt", g.name));
+    std::cout << std::format("size of g is ({}, {}).\n", g.nodeNum(), g.edgeNum());
+    std::ofstream fout(std::filesystem::path(PROJECT_DIR) / "tmp" / std::format("{}.txt", g.name));
     fout << g;
 }
 

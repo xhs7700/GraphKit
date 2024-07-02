@@ -6,7 +6,7 @@
 #include <cpr/session.h>
 #include <exception>
 #include <filesystem>
-#include <fmt/core.h>
+#include <format>
 #include <fstream>
 #include <functional>
 #include <ios>
@@ -20,7 +20,7 @@ void DownloadFile(const std::string& url, std::ofstream& fout)
 {
     cpr::Session session;
     session.SetUrl(url);
-    SetSpinner spinner(fmt::format("Downloading archive {}...", fs::path(url).filename().string()), session.GetDownloadFileLength());
+    SetSpinner spinner(std::format("Downloading archive {}...", fs::path(url).filename().string()), session.GetDownloadFileLength());
     session.SetProgressCallback(cpr::ProgressCallback([&](cpr::cpr_off_t downloadTotal, cpr::cpr_off_t downloadNow, cpr::cpr_off_t, cpr::cpr_off_t, intptr_t) {
         spinner.setProgress(downloadNow);
         return true;
@@ -35,7 +35,7 @@ void ExtractFile(const fs::path& path, std::function<int(archive*)> formatFunc)
     archive_read_support_filter_all(a);
     formatFunc(a);
     if (archive_read_open_filename(a, path.c_str(), 10240) != ARCHIVE_OK) {
-        std::string errStr = fmt::format("Failed to open archive: {}\n", archive_error_string(a));
+        std::string errStr = std::format("Failed to open archive: {}\n", archive_error_string(a));
         std::cerr << errStr;
         std::terminate();
     }
@@ -53,7 +53,7 @@ void ExtractFile(const fs::path& path, std::function<int(archive*)> formatFunc)
                 while ((size = archive_read_data(a, buf, sizeof(buf))) > 0)
                     fout.write(buf, static_cast<std::streamsize>(size));
             } else {
-                std::string errStr = fmt::format("Failed to create file: {}\n", pathName);
+                std::string errStr = std::format("Failed to create file: {}\n", pathName);
                 std::cerr << errStr;
                 std::terminate();
             }
@@ -82,9 +82,9 @@ fs::path GetKonectPath(const std::string& internalName)
         return filePath;
     else if (fs::exists(dirPath))
         fs::remove_all(dirPath);
-    const fs::path bzPath = tmpDir / fmt::format("{}.tar.bz2", internalName);
+    const fs::path bzPath = tmpDir / std::format("{}.tar.bz2", internalName);
     if (!fs::exists(bzPath)) {
-        std::string url = fmt::format("http://konect.cc/files/download.tsv.{}.tar.bz2", internalName);
+        std::string url = std::format("http://konect.cc/files/download.tsv.{}.tar.bz2", internalName);
         std::ofstream fout(bzPath, std::ios::binary);
         DownloadFile(url, fout);
     }

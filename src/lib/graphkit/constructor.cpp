@@ -1,6 +1,6 @@
 #include "graphkit.h"
 #include "graphkitutils.h"
-#include <fmt/format.h>
+#include <format>
 #include <fstream>
 #include <ios>
 #include <iosfwd>
@@ -72,7 +72,7 @@ void UnweightedUndiGraph::Init(std::istream& in)
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    SetSpinner spinner(fmt::format("Reading UnweightedUndiGraph {}", name), file_size);
+    SetSpinner spinner(std::format("Reading UnweightedUndiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;
@@ -89,7 +89,7 @@ void WeightedUndiGraph::Init(std::istream& in)
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    SetSpinner spinner(fmt::format("Reading WeightedUndiGraph {}", name), file_size);
+    SetSpinner spinner(std::format("Reading WeightedUndiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;
@@ -106,7 +106,7 @@ void WeightedUndiGraph::Init(std::istream& in, std::function<weight_t()>&& gener
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    SetSpinner spinner(fmt::format("Reading WeightedUndiGraph {}", name), file_size);
+    SetSpinner spinner(std::format("Reading WeightedUndiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;
@@ -123,7 +123,7 @@ void UnweightedDiGraph::Init(std::istream& in)
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    SetSpinner spinner(fmt::format("Reading UnweightedDiGraph {}", name), file_size);
+    SetSpinner spinner(std::format("Reading UnweightedDiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;
@@ -140,7 +140,7 @@ void WeightedDiGraph::Init(std::istream& in)
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    SetSpinner spinner(fmt::format("Reading WeightedDiGraph {}", name), file_size);
+    SetSpinner spinner(std::format("Reading WeightedDiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;
@@ -157,7 +157,7 @@ void WeightedDiGraph::Init(std::istream& in, std::function<weight_t()>&& generat
     std::streamsize file_size = GetStreamSize(in);
     std::string line;
     int prev_progress = 0;
-    SetSpinner spinner(fmt::format("Reading WeightedDiGraph {}", name), file_size);
+    SetSpinner spinner(std::format("Reading WeightedDiGraph {}", name), file_size);
     while (std::getline(in, line)) {
         if (line.starts_with('#') || line.starts_with('%'))
             continue;

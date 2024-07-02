@@ -2,7 +2,7 @@ add_rules("mode.debug", "mode.release")
 set_languages("cxxlatest")
 
 add_requires("conan::libarchive/3.7.3", {alias = "libarchive"})
-add_requires("cpr ^1.10.5", "fmt ^10.2.1", "indicators ^2.3", "eigen ^3.4.0")
+add_requires("cpr ^1.10.5", "indicators ^2.3", "eigen ^3.4.0")
 -- set_config("spinner", false)
 
 option("spinner")
@@ -21,7 +21,7 @@ target("graphkit")
     add_includedirs("src/include", {public = true})
     add_headerfiles("src/include/graphkit.h")
     add_files("src/lib/graphkit/**.cpp")
-    add_packages("libarchive", "fmt", "cpr", "eigen", {public = true})
+    add_packages("libarchive", "cpr", "eigen", {public = true})
     add_deps("graphkit/utils")
 
 target("graphkit/test")
